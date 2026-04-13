@@ -79,6 +79,23 @@ function HeroEditor({ data, onChange }) {
       <Field label="Sub-headline"><textarea style={textareaStyle} rows={3} value={data.subheadline} onChange={e => set("subheadline", e.target.value)} /></Field>
       <Field label="Primary CTA"><input style={inputStyle} value={data.ctaPrimary} onChange={e => set("ctaPrimary", e.target.value)} /></Field>
       <Field label="Secondary CTA"><input style={inputStyle} value={data.ctaSecondary} onChange={e => set("ctaSecondary", e.target.value)} /></Field>
+      <Field label="Profile photo" hint="Paste a direct image URL (e.g. from Google Drive, Dropbox, or any hosted image). Leave blank to show the placeholder.">
+        <input style={inputStyle} type="url" placeholder="https://example.com/todd-photo.jpg"
+          value={data.photoUrl || ""} onChange={e => set("photoUrl", e.target.value)} />
+        {data.photoUrl && (
+          <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 12 }}>
+            <img src={data.photoUrl} alt="Preview" onError={e => { e.target.style.display = "none"; }}
+              style={{ width: 72, height: 72, borderRadius: 12, objectFit: "cover", border: "1.5px solid #e5e7eb" }} />
+            <div>
+              <p style={{ fontSize: 12, color: "#16a34a", fontWeight: 600 }}>✓ Photo set</p>
+              <button onClick={() => set("photoUrl", "")}
+                style={{ fontSize: 12, color: "#dc2626", background: "none", border: "none", cursor: "pointer", padding: 0, marginTop: 2 }}>
+                Remove photo
+              </button>
+            </div>
+          </div>
+        )}
+      </Field>
       <Field label="Stats (number + label)">
         {data.stats.map((s, i) => (
           <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8 }}>

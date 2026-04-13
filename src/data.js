@@ -6,6 +6,7 @@ export const DEFAULT_CONTENT = {
   hero: {
     badge: "AI Educator · Consultant · Speaker",
     headline: "Navigate the AI Revolution with Confidence.",
+    photoUrl: "",   // ← paste a direct image URL here, or set it via Admin → Hero
     subheadline:
       "I help business leaders, teams, and curious professionals cut through the noise — understand what matters, adopt the right tools, and build AI-ready organizations.",
     ctaPrimary: "Work With Me",

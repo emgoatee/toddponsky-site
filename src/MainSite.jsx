@@ -169,10 +169,20 @@ export default function MainSite({ content, onAdminClick }) {
               </div>
             </div>
             <div style={{ flex: "0 0 auto" }}>
-              <div style={{ width: 280, height: 280, borderRadius: 24, background: "linear-gradient(135deg, #3b82f6, #1d4ed8)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 96, boxShadow: "0 30px 60px rgba(0,0,0,0.4)" }}>
-                👤
-              </div>
-              <p style={{ textAlign: "center", color: "#475569", fontSize: 12, marginTop: 8 }}>Replace with photo</p>
+              {hero.photoUrl ? (
+                <img
+                  src={hero.photoUrl}
+                  alt="Todd Ponsky"
+                  style={{ width: 280, height: 280, borderRadius: 24, objectFit: "cover", objectPosition: "top", boxShadow: "0 30px 60px rgba(0,0,0,0.4)", display: "block" }}
+                />
+              ) : (
+                <>
+                  <div style={{ width: 280, height: 280, borderRadius: 24, background: "linear-gradient(135deg, #3b82f6, #1d4ed8)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 96, boxShadow: "0 30px 60px rgba(0,0,0,0.4)" }}>
+                    👤
+                  </div>
+                  <p style={{ textAlign: "center", color: "#475569", fontSize: 12, marginTop: 8 }}>Add photo in Admin → Hero</p>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -204,7 +214,7 @@ export default function MainSite({ content, onAdminClick }) {
             </div>
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* ── AI TOOLS ── */}
       {isVisible("tools") && <section id="tools" style={{ padding: "96px 24px", background: "#fff" }}>
