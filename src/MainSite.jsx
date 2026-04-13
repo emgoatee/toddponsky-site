@@ -143,7 +143,7 @@ export default function MainSite({ content, onAdminClick }) {
                 {hero.badge}
               </span>
               <h1 style={{ fontSize: "clamp(36px,5vw,58px)", fontWeight: 800, lineHeight: 1.1, marginBottom: 20, letterSpacing: "-1px" }}>
-                {hero.headline.replace(".", "")}
+                {hero.headline.replace(/\s*with Confidence\.?$/i, "").replace(/\.$/, "")}
                 <br /><span style={{ color: "#60a5fa" }}>with Confidence.</span>
               </h1>
               <p style={{ fontSize: 18, color: "#94a3b8", lineHeight: 1.7, marginBottom: 32, maxWidth: 520 }}>
@@ -173,7 +173,15 @@ export default function MainSite({ content, onAdminClick }) {
                 <img
                   src={hero.photoUrl}
                   alt="Todd Ponsky"
-                  style={{ width: 280, height: 280, borderRadius: 24, objectFit: "cover", objectPosition: "top", boxShadow: "0 30px 60px rgba(0,0,0,0.4)", display: "block" }}
+                  style={{
+                    width: 320,
+                    height: 380,
+                    objectFit: "contain",
+                    objectPosition: "center bottom",
+                    display: "block",
+                    // drop-shadow follows the transparent edges of the PNG
+                    filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))",
+                  }}
                 />
               ) : (
                 <>

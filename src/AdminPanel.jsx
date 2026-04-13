@@ -79,8 +79,8 @@ function HeroEditor({ data, onChange }) {
       <Field label="Sub-headline"><textarea style={textareaStyle} rows={3} value={data.subheadline} onChange={e => set("subheadline", e.target.value)} /></Field>
       <Field label="Primary CTA"><input style={inputStyle} value={data.ctaPrimary} onChange={e => set("ctaPrimary", e.target.value)} /></Field>
       <Field label="Secondary CTA"><input style={inputStyle} value={data.ctaSecondary} onChange={e => set("ctaSecondary", e.target.value)} /></Field>
-      <Field label="Profile photo" hint="Paste a direct image URL (e.g. from Google Drive, Dropbox, or any hosted image). Leave blank to show the placeholder.">
-        <input style={inputStyle} type="url" placeholder="https://example.com/todd-photo.jpg"
+      <Field label="Profile photo" hint="To use a local file: put your photo in the project's public/ folder (e.g. public/todd.jpg) then type /todd.jpg below. Or paste any direct image URL. Google Drive links won't work — use Imgur, Cloudinary, or a local file instead.">
+        <input style={inputStyle} placeholder="/todd.jpg  or  https://i.imgur.com/yourphoto.jpg"
           value={data.photoUrl || ""} onChange={e => set("photoUrl", e.target.value)} />
         {data.photoUrl && (
           <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 12 }}>
