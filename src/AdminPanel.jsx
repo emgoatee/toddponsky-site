@@ -535,9 +535,9 @@ export default function AdminPanel({ content, updateContent, resetContent, onClo
 
           {active === "sections" && (
             <SectionsManager
-              sectionOrder={content.sectionOrder}
-              sectionVisibility={content.sectionVisibility}
-              customPages={content.customPages}
+              sectionOrder={content.sectionOrder ?? ["about","tools","learn","services","contact"]}
+              sectionVisibility={content.sectionVisibility ?? {about:true,tools:true,learn:true,services:true,contact:true}}
+              customPages={content.customPages ?? []}
               onOrderChange={v => set("sectionOrder", v)}
               onVisibilityChange={v => set("sectionVisibility", v)}
               onPagesChange={v => set("customPages", v)}

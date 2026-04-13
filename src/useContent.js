@@ -6,7 +6,12 @@ const STORAGE_KEY = "tp_site_content";
 function loadContent() {
   try {
     const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved) return JSON.parse(saved);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      // Shallow-merge with defaults so any new top-level fields
+      // added after the initial save are always present.
+      return { ...DEFAULT_CONTENT, ...parsed };
+    }
   } catch (e) {
     console.warn("Could not load saved content:", e);
   }
