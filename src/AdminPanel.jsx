@@ -1,312 +1,416 @@
 import { useState } from "react";
-import { X, Plus, Trash2, Save, RotateCcw, Lock, Eye } from "lucide-react";
+import {
+  X, Plus, Trash2, Save, RotateCcw, Lock, Eye, EyeOff,
+  ChevronUp, ChevronDown, Settings, FileText, Layout,
+} from "lucide-react";
 import { TOOL_CATEGORIES } from "./data.js";
 
-// ─── Reusable field components ────────────────────────────────────────────────
+// ─── Helpers ──────────────────────────────────────────────────────────────────
 
-function Field({ label, children }) {
+const inputStyle = {
+  width: "100%", border: "1.5px solid #e5e7eb", borderRadius: 8,
+  padding: "9px 12px", fontSize: 14, outline: "none", background: "#fff",
+  boxSizing: "border-box",
+};
+const textareaStyle = { ...inputStyle, resize: "vertical", fontFamily: "inherit" };
+
+function Field({ label, hint, children }) {
   return (
-    <div style={{ marginBottom: 16 }}>
-      <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 6, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+    <div style={{ marginBottom: 18 }}>
+      <label style={{ display: "block", fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 5, textTransform: "uppercase", letterSpacing: "0.07em" }}>
         {label}
       </label>
+      {children}
+      {hint && <p style={{ fontSize: 11, color: "#9ca3af", marginTop: 4 }}>{hint}</p>}
+    </div>
+  );
+}
+
+function Btn({ onClick, children, variant = "primary", small, full, style: extra = {}, type = "button" }) {
+  const pad = small ? "5px 11px" : "9px 16px";
+  const fs = small ? 12 : 14;
+  const styles = {
+    primary:  { background: "#2563eb", color: "#fff" },
+    danger:   { background: "#fee2e2", color: "#dc2626" },
+    ghost:    { background: "#f3f4f6", color: "#374151" },
+    success:  { background: "#dcfce7", color: "#16a34a" },
+    dark:     { background: "#1e293b", color: "#e2e8f0" },
+  };
+  return (
+    <button type={type} onClick={onClick}
+      style={{ border: "none", borderRadius: 7, cursor: "pointer", fontWeight: 600,
+        display: "inline-flex", alignItems: "center", gap: 5,
+        padding: pad, fontSize: fs, width: full ? "100%" : undefined,
+        justifyContent: full ? "center" : undefined,
+        ...styles[variant], ...extra }}>
+      {children}
+    </button>
+  );
+}
+
+function Card({ children, style: extra = {} }) {
+  return (
+    <div style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: 16, marginBottom: 14, ...extra }}>
       {children}
     </div>
   );
 }
 
-const inputStyle = {
-  width: "100%",
-  border: "1.5px solid #e5e7eb",
-  borderRadius: 8,
-  padding: "9px 12px",
-  fontSize: 14,
-  outline: "none",
-  background: "#fff",
-  boxSizing: "border-box",
-};
-
-const textareaStyle = {
-  ...inputStyle,
-  resize: "vertical",
-  fontFamily: "inherit",
-};
-
-function Btn({ onClick, children, variant = "primary", small, style = {} }) {
-  const base = { border: "none", borderRadius: 8, cursor: "pointer", fontWeight: 600, display: "inline-flex", alignItems: "center", gap: 6 };
-  const variants = {
-    primary: { background: "#2563eb", color: "#fff" },
-    danger: { background: "#fee2e2", color: "#dc2626" },
-    ghost: { background: "#f3f4f6", color: "#374151" },
-    success: { background: "#dcfce7", color: "#16a34a" },
-  };
+function SectionHeader({ title, onDelete, onMoveUp, onMoveDown, canUp, canDown, deleteLabel = "Delete" }) {
   return (
-    <button onClick={onClick}
-      style={{ ...base, ...variants[variant], padding: small ? "6px 12px" : "9px 16px", fontSize: small ? 12 : 14, ...style }}>
-      {children}
-    </button>
+    <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 12 }}>
+      <span style={{ fontWeight: 700, fontSize: 14, color: "#111827", flex: 1 }}>{title}</span>
+      {onMoveUp  && <Btn variant="ghost" small onClick={onMoveUp}  disabled={!canUp}><ChevronUp size={13} /></Btn>}
+      {onMoveDown && <Btn variant="ghost" small onClick={onMoveDown} disabled={!canDown}><ChevronDown size={13} /></Btn>}
+      {onDelete  && <Btn variant="danger" small onClick={onDelete}><Trash2 size={13} /> {deleteLabel}</Btn>}
+    </div>
   );
 }
 
 // ─── Section editors ──────────────────────────────────────────────────────────
 
 function HeroEditor({ data, onChange }) {
-  const set = (key, val) => onChange({ ...data, [key]: val });
+  const set = (k, v) => onChange({ ...data, [k]: v });
+  const setStat = (i, k, v) => { const s = [...data.stats]; s[i] = { ...s[i], [k]: v }; set("stats", s); };
   return (
-    <div>
-      <Field label="Badge text">
-        <input style={inputStyle} value={data.badge} onChange={e => set("badge", e.target.value)} />
-      </Field>
-      <Field label="Main Headline">
-        <input style={inputStyle} value={data.headline} onChange={e => set("headline", e.target.value)} />
-      </Field>
-      <Field label="Sub-headline">
-        <textarea style={textareaStyle} rows={3} value={data.subheadline} onChange={e => set("subheadline", e.target.value)} />
-      </Field>
-      <Field label="Primary CTA button">
-        <input style={inputStyle} value={data.ctaPrimary} onChange={e => set("ctaPrimary", e.target.value)} />
-      </Field>
-      <Field label="Secondary CTA button">
-        <input style={inputStyle} value={data.ctaSecondary} onChange={e => set("ctaSecondary", e.target.value)} />
-      </Field>
-      <Field label="Stats">
-        {data.stats.map((stat, i) => (
+    <>
+      <Field label="Badge text"><input style={inputStyle} value={data.badge} onChange={e => set("badge", e.target.value)} /></Field>
+      <Field label="Main headline"><input style={inputStyle} value={data.headline} onChange={e => set("headline", e.target.value)} /></Field>
+      <Field label="Sub-headline"><textarea style={textareaStyle} rows={3} value={data.subheadline} onChange={e => set("subheadline", e.target.value)} /></Field>
+      <Field label="Primary CTA"><input style={inputStyle} value={data.ctaPrimary} onChange={e => set("ctaPrimary", e.target.value)} /></Field>
+      <Field label="Secondary CTA"><input style={inputStyle} value={data.ctaSecondary} onChange={e => set("ctaSecondary", e.target.value)} /></Field>
+      <Field label="Stats (number + label)">
+        {data.stats.map((s, i) => (
           <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-            <input style={{ ...inputStyle, width: 100 }} placeholder="Number" value={stat.num}
-              onChange={e => { const s = [...data.stats]; s[i] = { ...s[i], num: e.target.value }; set("stats", s); }} />
-            <input style={inputStyle} placeholder="Label" value={stat.label}
-              onChange={e => { const s = [...data.stats]; s[i] = { ...s[i], label: e.target.value }; set("stats", s); }} />
+            <input style={{ ...inputStyle, width: 90 }} placeholder="e.g. 500+" value={s.num} onChange={e => setStat(i, "num", e.target.value)} />
+            <input style={inputStyle} placeholder="Label" value={s.label} onChange={e => setStat(i, "label", e.target.value)} />
           </div>
         ))}
       </Field>
-    </div>
+    </>
   );
 }
 
 function AboutEditor({ data, onChange }) {
-  const set = (key, val) => onChange({ ...data, [key]: val });
+  const set = (k, v) => onChange({ ...data, [k]: v });
+  const setRole = (i, k, v) => { const r = [...data.roles]; r[i] = { ...r[i], [k]: v }; set("roles", r); };
+  const addRole = () => set("roles", [...data.roles, { icon: "✨", title: "New Role", desc: "" }]);
+  const removeRole = (i) => set("roles", data.roles.filter((_, idx) => idx !== i));
   return (
-    <div>
-      <Field label="Section Heading">
-        <input style={inputStyle} value={data.heading} onChange={e => set("heading", e.target.value)} />
-      </Field>
-      <Field label="Bio — Paragraph 1">
-        <textarea style={textareaStyle} rows={4} value={data.bio1} onChange={e => set("bio1", e.target.value)} />
-      </Field>
-      <Field label="Bio — Paragraph 2">
-        <textarea style={textareaStyle} rows={4} value={data.bio2} onChange={e => set("bio2", e.target.value)} />
-      </Field>
-      <Field label="Expertise Tags (one per line)">
-        <textarea style={textareaStyle} rows={4}
-          value={data.tags.join("\n")}
+    <>
+      <Field label="Section heading"><input style={inputStyle} value={data.heading} onChange={e => set("heading", e.target.value)} /></Field>
+      <Field label="Bio — paragraph 1"><textarea style={textareaStyle} rows={4} value={data.bio1} onChange={e => set("bio1", e.target.value)} /></Field>
+      <Field label="Bio — paragraph 2"><textarea style={textareaStyle} rows={4} value={data.bio2} onChange={e => set("bio2", e.target.value)} /></Field>
+      <Field label="Expertise tags" hint="One tag per line">
+        <textarea style={textareaStyle} rows={5} value={data.tags.join("\n")}
           onChange={e => set("tags", e.target.value.split("\n").filter(Boolean))} />
       </Field>
-      <Field label="Role Cards">
+      <Field label="Role cards">
         {data.roles.map((role, i) => (
           <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center" }}>
-            <input style={{ ...inputStyle, width: 48 }} placeholder="Icon" value={role.icon}
-              onChange={e => { const r = [...data.roles]; r[i] = { ...r[i], icon: e.target.value }; set("roles", r); }} />
-            <input style={{ ...inputStyle, flex: 1 }} placeholder="Title" value={role.title}
-              onChange={e => { const r = [...data.roles]; r[i] = { ...r[i], title: e.target.value }; set("roles", r); }} />
-            <input style={{ ...inputStyle, flex: 2 }} placeholder="Description" value={role.desc}
-              onChange={e => { const r = [...data.roles]; r[i] = { ...r[i], desc: e.target.value }; set("roles", r); }} />
+            <input style={{ ...inputStyle, width: 48 }} value={role.icon} onChange={e => setRole(i, "icon", e.target.value)} />
+            <input style={{ ...inputStyle, flex: 1 }} placeholder="Title" value={role.title} onChange={e => setRole(i, "title", e.target.value)} />
+            <input style={{ ...inputStyle, flex: 2 }} placeholder="Description" value={role.desc} onChange={e => setRole(i, "desc", e.target.value)} />
+            <Btn variant="danger" small onClick={() => removeRole(i)}><Trash2 size={13} /></Btn>
           </div>
         ))}
+        <Btn variant="ghost" small onClick={addRole}><Plus size={13} /> Add Role Card</Btn>
       </Field>
-    </div>
+    </>
   );
 }
 
 function ToolsEditor({ tools, onChange }) {
-  const [newTool, setNewTool] = useState({ name: "", category: "Writing & Content", description: "", url: "", featured: false });
+  const blank = { name: "", category: "Writing & Content", description: "", url: "", featured: false };
+  const [draft, setDraft] = useState(blank);
 
-  const update = (i, key, val) => {
-    const updated = [...tools];
-    updated[i] = { ...updated[i], [key]: val };
-    onChange(updated);
-  };
+  const update = (i, k, v) => { const t = [...tools]; t[i] = { ...t[i], [k]: v }; onChange(t); };
   const remove = (i) => onChange(tools.filter((_, idx) => idx !== i));
   const add = () => {
-    if (!newTool.name || !newTool.url) return;
-    onChange([...tools, newTool]);
-    setNewTool({ name: "", category: "Writing & Content", description: "", url: "", featured: false });
+    if (!draft.name.trim() || !draft.url.trim()) return;
+    onChange([...tools, draft]);
+    setDraft(blank);
   };
 
   return (
-    <div>
+    <>
       {/* Add new */}
       <div style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd", borderRadius: 12, padding: 16, marginBottom: 24 }}>
-        <div style={{ fontSize: 13, fontWeight: 700, color: "#0369a1", marginBottom: 12 }}>➕ Add New Tool</div>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#0369a1", marginBottom: 10 }}>➕ Add New Tool</div>
         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 }}>
-          <input style={inputStyle} placeholder="Tool name *" value={newTool.name} onChange={e => setNewTool({ ...newTool, name: e.target.value })} />
-          <select style={inputStyle} value={newTool.category} onChange={e => setNewTool({ ...newTool, category: e.target.value })}>
+          <input style={inputStyle} placeholder="Tool name *" value={draft.name} onChange={e => setDraft({ ...draft, name: e.target.value })} />
+          <select style={inputStyle} value={draft.category} onChange={e => setDraft({ ...draft, category: e.target.value })}>
             {TOOL_CATEGORIES.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
-        <input style={{ ...inputStyle, marginBottom: 8 }} placeholder="URL *" value={newTool.url} onChange={e => setNewTool({ ...newTool, url: e.target.value })} />
-        <textarea style={{ ...textareaStyle, marginBottom: 8 }} rows={2} placeholder="Description" value={newTool.description} onChange={e => setNewTool({ ...newTool, description: e.target.value })} />
+        <input style={{ ...inputStyle, marginBottom: 8 }} placeholder="URL *" value={draft.url} onChange={e => setDraft({ ...draft, url: e.target.value })} />
+        <textarea style={{ ...textareaStyle, marginBottom: 8 }} rows={2} placeholder="Description" value={draft.description} onChange={e => setDraft({ ...draft, description: e.target.value })} />
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
           <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, cursor: "pointer" }}>
-            <input type="checkbox" checked={newTool.featured} onChange={e => setNewTool({ ...newTool, featured: e.target.checked })} />
-            Featured (show ⭐ badge)
+            <input type="checkbox" checked={draft.featured} onChange={e => setDraft({ ...draft, featured: e.target.checked })} />
+            Featured (⭐ badge)
           </label>
-          <Btn onClick={add} small><Plus size={14} /> Add Tool</Btn>
+          <Btn onClick={add} small><Plus size={13} /> Add Tool</Btn>
         </div>
       </div>
 
-      {/* Existing tools */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-        {tools.map((tool, i) => (
-          <div key={i} style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 10, padding: 14 }}>
-            <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-              <input style={{ ...inputStyle, flex: 2 }} value={tool.name} placeholder="Name"
-                onChange={e => update(i, "name", e.target.value)} />
-              <select style={{ ...inputStyle, flex: 2 }} value={tool.category}
-                onChange={e => update(i, "category", e.target.value)}>
-                {TOOL_CATEGORIES.map(c => <option key={c}>{c}</option>)}
-              </select>
-              <Btn variant="danger" small onClick={() => remove(i)}><Trash2 size={13} /></Btn>
-            </div>
-            <input style={{ ...inputStyle, marginBottom: 8 }} value={tool.url} placeholder="URL"
-              onChange={e => update(i, "url", e.target.value)} />
-            <textarea style={{ ...textareaStyle, marginBottom: 8 }} rows={2} value={tool.description} placeholder="Description"
-              onChange={e => update(i, "description", e.target.value)} />
-            <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, cursor: "pointer" }}>
-              <input type="checkbox" checked={tool.featured}
-                onChange={e => update(i, "featured", e.target.checked)} />
-              Featured
-            </label>
+      {tools.map((tool, i) => (
+        <Card key={i}>
+          <div style={{ display: "flex", gap: 8, marginBottom: 8 }}>
+            <input style={{ ...inputStyle, flex: 2 }} value={tool.name} placeholder="Name" onChange={e => update(i, "name", e.target.value)} />
+            <select style={{ ...inputStyle, flex: 2 }} value={tool.category} onChange={e => update(i, "category", e.target.value)}>
+              {TOOL_CATEGORIES.map(c => <option key={c}>{c}</option>)}
+            </select>
+            <Btn variant="danger" small onClick={() => remove(i)}><Trash2 size={13} /></Btn>
           </div>
-        ))}
-      </div>
-    </div>
+          <input style={{ ...inputStyle, marginBottom: 8 }} value={tool.url} placeholder="URL" onChange={e => update(i, "url", e.target.value)} />
+          <textarea style={{ ...textareaStyle, marginBottom: 8 }} rows={2} value={tool.description} placeholder="Description" onChange={e => update(i, "description", e.target.value)} />
+          <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, cursor: "pointer" }}>
+            <input type="checkbox" checked={tool.featured} onChange={e => update(i, "featured", e.target.checked)} />
+            Featured
+          </label>
+        </Card>
+      ))}
+    </>
   );
 }
 
 function PlaylistsEditor({ playlists, onChange }) {
-  const updatePlaylist = (pi, key, val) => {
+  const blank = { id: `pl_${Date.now()}`, title: "New Playlist", icon: "📋", description: "", videos: [] };
+
+  const addPlaylist = () => onChange([...playlists, { ...blank, id: `pl_${Date.now()}` }]);
+  const removePlaylist = (pi) => { if (window.confirm("Delete this entire playlist?")) onChange(playlists.filter((_, i) => i !== pi)); };
+  const movePlaylist = (pi, dir) => {
     const updated = [...playlists];
-    updated[pi] = { ...updated[pi], [key]: val };
+    const swapWith = pi + dir;
+    if (swapWith < 0 || swapWith >= updated.length) return;
+    [updated[pi], updated[swapWith]] = [updated[swapWith], updated[pi]];
     onChange(updated);
   };
-  const updateVideo = (pi, vi, key, val) => {
-    const updated = [...playlists];
-    const videos = [...updated[pi].videos];
-    videos[vi] = { ...videos[vi], [key]: val };
-    updated[pi] = { ...updated[pi], videos };
-    onChange(updated);
+  const updatePl = (pi, k, v) => { const u = [...playlists]; u[pi] = { ...u[pi], [k]: v }; onChange(u); };
+  const updateVideo = (pi, vi, k, v) => {
+    const u = [...playlists]; const videos = [...u[pi].videos]; videos[vi] = { ...videos[vi], [k]: v };
+    u[pi] = { ...u[pi], videos }; onChange(u);
   };
   const addVideo = (pi) => {
-    const updated = [...playlists];
-    updated[pi].videos = [...updated[pi].videos, { ytId: "", title: "", duration: "" }];
-    onChange(updated);
+    const u = [...playlists]; u[pi].videos = [...u[pi].videos, { ytId: "", title: "", duration: "" }]; onChange(u);
   };
   const removeVideo = (pi, vi) => {
-    const updated = [...playlists];
-    updated[pi].videos = updated[pi].videos.filter((_, idx) => idx !== vi);
-    onChange(updated);
+    const u = [...playlists]; u[pi].videos = u[pi].videos.filter((_, i) => i !== vi); onChange(u);
   };
 
   return (
-    <div>
+    <>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
+        <Btn onClick={addPlaylist}><Plus size={14} /> New Playlist</Btn>
+      </div>
       <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 16 }}>
-        For YouTube IDs: open a video, copy the part after <code>?v=</code> in the URL (e.g. <code>dQw4w9WgXcQ</code>).
+        YouTube ID = the part after <code style={{ background: "#f3f4f6", padding: "1px 5px", borderRadius: 4 }}>?v=</code> in any YouTube URL.
       </p>
+
       {playlists.map((pl, pi) => (
-        <div key={pi} style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: 16, marginBottom: 20 }}>
-          <div style={{ display: "flex", gap: 8, marginBottom: 12 }}>
-            <input style={{ ...inputStyle, width: 48 }} value={pl.icon} onChange={e => updatePlaylist(pi, "icon", e.target.value)} placeholder="Icon" />
-            <input style={{ ...inputStyle, flex: 1 }} value={pl.title} onChange={e => updatePlaylist(pi, "title", e.target.value)} placeholder="Playlist title" />
+        <Card key={pl.id} style={{ borderColor: "#d1d5db" }}>
+          <SectionHeader
+            title={pl.icon + " " + pl.title}
+            onDelete={() => removePlaylist(pi)}
+            onMoveUp={() => movePlaylist(pi, -1)}
+            onMoveDown={() => movePlaylist(pi, 1)}
+            canUp={pi > 0} canDown={pi < playlists.length - 1}
+            deleteLabel="Delete Playlist"
+          />
+          <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
+            <input style={{ ...inputStyle, width: 52 }} value={pl.icon} placeholder="Icon" onChange={e => updatePl(pi, "icon", e.target.value)} />
+            <input style={inputStyle} value={pl.title} placeholder="Playlist title" onChange={e => updatePl(pi, "title", e.target.value)} />
           </div>
-          <textarea style={{ ...textareaStyle, marginBottom: 12 }} rows={2} value={pl.description}
-            onChange={e => updatePlaylist(pi, "description", e.target.value)} placeholder="Playlist description" />
-          <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Videos</div>
+          <textarea style={{ ...textareaStyle, marginBottom: 12 }} rows={2} value={pl.description} placeholder="Playlist description" onChange={e => updatePl(pi, "description", e.target.value)} />
+
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.07em" }}>
+            Videos ({pl.videos.length})
+          </div>
           {pl.videos.map((v, vi) => (
             <div key={vi} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center" }}>
-              <input style={{ ...inputStyle, width: 120 }} value={v.ytId} placeholder="YouTube ID" onChange={e => updateVideo(pi, vi, "ytId", e.target.value)} />
-              <input style={{ ...inputStyle, flex: 3 }} value={v.title} placeholder="Video title" onChange={e => updateVideo(pi, vi, "title", e.target.value)} />
-              <input style={{ ...inputStyle, width: 72 }} value={v.duration} placeholder="0:00" onChange={e => updateVideo(pi, vi, "duration", e.target.value)} />
+              <input style={{ ...inputStyle, width: 115 }} value={v.ytId} placeholder="YouTube ID" onChange={e => updateVideo(pi, vi, "ytId", e.target.value)} />
+              <input style={{ ...inputStyle, flex: 3 }} value={v.title} placeholder="Title" onChange={e => updateVideo(pi, vi, "title", e.target.value)} />
+              <input style={{ ...inputStyle, width: 68 }} value={v.duration} placeholder="0:00" onChange={e => updateVideo(pi, vi, "duration", e.target.value)} />
               <Btn variant="danger" small onClick={() => removeVideo(pi, vi)}><Trash2 size={13} /></Btn>
             </div>
           ))}
           <Btn variant="ghost" small onClick={() => addVideo(pi)}><Plus size={13} /> Add Video</Btn>
-        </div>
+        </Card>
       ))}
-    </div>
+    </>
   );
 }
 
 function ServicesEditor({ services, onChange }) {
-  const update = (i, key, val) => {
-    const updated = [...services];
-    updated[i] = { ...updated[i], [key]: val };
-    onChange(updated);
+  const blank = { icon: "✨", title: "New Service", description: "", features: [""], cta: "Get Started" };
+  const addService = () => onChange([...services, blank]);
+  const removeService = (i) => { if (window.confirm("Delete this service?")) onChange(services.filter((_, idx) => idx !== i)); };
+  const moveService = (i, dir) => {
+    const u = [...services]; const sw = i + dir;
+    if (sw < 0 || sw >= u.length) return;
+    [u[i], u[sw]] = [u[sw], u[i]]; onChange(u);
   };
-  const updateFeature = (si, fi, val) => {
-    const updated = [...services];
-    const features = [...updated[si].features];
-    features[fi] = val;
-    updated[si] = { ...updated[si], features };
-    onChange(updated);
-  };
-  const addFeature = (si) => {
-    const updated = [...services];
-    updated[si].features = [...updated[si].features, ""];
-    onChange(updated);
-  };
-  const removeFeature = (si, fi) => {
-    const updated = [...services];
-    updated[si].features = updated[si].features.filter((_, idx) => idx !== fi);
-    onChange(updated);
-  };
+  const update = (i, k, v) => { const u = [...services]; u[i] = { ...u[i], [k]: v }; onChange(u); };
+  const updateFeature = (si, fi, v) => { const u = [...services]; u[si].features[fi] = v; onChange(u); };
+  const addFeature = (si) => { const u = [...services]; u[si].features = [...u[si].features, ""]; onChange(u); };
+  const removeFeature = (si, fi) => { const u = [...services]; u[si].features = u[si].features.filter((_, i) => i !== fi); onChange(u); };
 
   return (
-    <div>
-      {services.map((service, si) => (
-        <div key={si} style={{ background: "#fff", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: 16, marginBottom: 20 }}>
+    <>
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
+        <Btn onClick={addService}><Plus size={14} /> New Service</Btn>
+      </div>
+
+      {services.map((svc, si) => (
+        <Card key={si}>
+          <SectionHeader
+            title={svc.icon + " " + svc.title}
+            onDelete={() => removeService(si)}
+            onMoveUp={() => moveService(si, -1)}
+            onMoveDown={() => moveService(si, 1)}
+            canUp={si > 0} canDown={si < services.length - 1}
+            deleteLabel="Delete Service"
+          />
           <div style={{ display: "flex", gap: 8, marginBottom: 10 }}>
-            <input style={{ ...inputStyle, width: 52 }} value={service.icon} onChange={e => update(si, "icon", e.target.value)} placeholder="Icon" />
-            <input style={{ ...inputStyle, flex: 1 }} value={service.title} onChange={e => update(si, "title", e.target.value)} placeholder="Service title" />
+            <input style={{ ...inputStyle, width: 52 }} value={svc.icon} onChange={e => update(si, "icon", e.target.value)} />
+            <input style={inputStyle} value={svc.title} onChange={e => update(si, "title", e.target.value)} placeholder="Title" />
           </div>
-          <textarea style={{ ...textareaStyle, marginBottom: 10 }} rows={3} value={service.description}
-            onChange={e => update(si, "description", e.target.value)} />
-          <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Features</div>
-          {service.features.map((f, fi) => (
+          <textarea style={{ ...textareaStyle, marginBottom: 10 }} rows={3} value={svc.description} placeholder="Description" onChange={e => update(si, "description", e.target.value)} />
+          <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.07em" }}>Features</div>
+          {svc.features.map((f, fi) => (
             <div key={fi} style={{ display: "flex", gap: 8, marginBottom: 6 }}>
-              <input style={inputStyle} value={f} onChange={e => updateFeature(si, fi, e.target.value)} placeholder="Feature" />
+              <input style={inputStyle} value={f} onChange={e => updateFeature(si, fi, e.target.value)} placeholder="Feature bullet" />
               <Btn variant="danger" small onClick={() => removeFeature(si, fi)}><Trash2 size={13} /></Btn>
             </div>
           ))}
-          <Btn variant="ghost" small onClick={() => addFeature(si)} style={{ marginBottom: 12 }}><Plus size={13} /> Add Feature</Btn>
-          <div>
-            <label style={{ display: "block", fontSize: 12, fontWeight: 600, color: "#374151", marginBottom: 6 }}>BUTTON TEXT</label>
-            <input style={inputStyle} value={service.cta} onChange={e => update(si, "cta", e.target.value)} placeholder="CTA button text" />
+          <div style={{ display: "flex", gap: 8, marginTop: 8, flexWrap: "wrap" }}>
+            <Btn variant="ghost" small onClick={() => addFeature(si)}><Plus size={13} /> Add Feature</Btn>
           </div>
-        </div>
+          <div style={{ marginTop: 12 }}>
+            <Field label="Button text">
+              <input style={inputStyle} value={svc.cta} onChange={e => update(si, "cta", e.target.value)} />
+            </Field>
+          </div>
+        </Card>
       ))}
-    </div>
+    </>
+  );
+}
+
+// ─── Sections Manager ─────────────────────────────────────────────────────────
+
+const BUILT_IN_SECTIONS = [
+  { id: "about",    label: "About",        icon: "👤" },
+  { id: "tools",    label: "AI Tools",     icon: "🛠" },
+  { id: "learn",    label: "Learn",        icon: "▶" },
+  { id: "services", label: "Services",     icon: "💼" },
+  { id: "contact",  label: "Contact",      icon: "✉" },
+];
+
+function SectionsManager({ sectionOrder, sectionVisibility, customPages, onOrderChange, onVisibilityChange, onPagesChange }) {
+  const move = (i, dir) => {
+    const u = [...sectionOrder]; const sw = i + dir;
+    if (sw < 0 || sw >= u.length) return;
+    [u[i], u[sw]] = [u[sw], u[i]]; onOrderChange(u);
+  };
+  const toggle = (id) => onVisibilityChange({ ...sectionVisibility, [id]: !sectionVisibility[id] });
+
+  // Custom pages
+  const addPage = () => {
+    const id = `page_${Date.now()}`;
+    onPagesChange([...customPages, { id, navLabel: "New Page", heading: "New Page", subheading: "", body: "" }]);
+  };
+  const removePage = (i) => { if (window.confirm("Delete this page?")) onPagesChange(customPages.filter((_, idx) => idx !== i)); };
+  const updatePage = (i, k, v) => { const u = [...customPages]; u[i] = { ...u[i], [k]: v }; onPagesChange(u); };
+
+  return (
+    <>
+      {/* Built-in sections */}
+      <div style={{ marginBottom: 32 }}>
+        <div style={{ fontSize: 13, fontWeight: 700, color: "#111827", marginBottom: 12 }}>Built-in Sections</div>
+        <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 14 }}>
+          Toggle visibility or drag to reorder how sections appear on the page and in the nav.
+        </p>
+        {sectionOrder.map((id, i) => {
+          const meta = BUILT_IN_SECTIONS.find(s => s.id === id);
+          if (!meta) return null;
+          const visible = sectionVisibility[id] !== false;
+          return (
+            <div key={id} style={{ display: "flex", alignItems: "center", gap: 10, background: visible ? "#fff" : "#f9fafb", border: "1.5px solid #e5e7eb", borderRadius: 10, padding: "10px 14px", marginBottom: 8, opacity: visible ? 1 : 0.6 }}>
+              <span style={{ fontSize: 18 }}>{meta.icon}</span>
+              <span style={{ flex: 1, fontWeight: 600, fontSize: 14, color: visible ? "#111827" : "#9ca3af" }}>{meta.label}</span>
+              <button onClick={() => toggle(id)}
+                style={{ background: visible ? "#dcfce7" : "#f3f4f6", border: "none", borderRadius: 6, padding: "4px 10px", cursor: "pointer", display: "flex", alignItems: "center", gap: 5, fontSize: 12, fontWeight: 600, color: visible ? "#16a34a" : "#6b7280" }}>
+                {visible ? <><Eye size={13} /> Visible</> : <><EyeOff size={13} /> Hidden</>}
+              </button>
+              <Btn variant="ghost" small onClick={() => move(i, -1)} style={{ padding: "4px 7px" }} disabled={i === 0}><ChevronUp size={14} /></Btn>
+              <Btn variant="ghost" small onClick={() => move(i, 1)} style={{ padding: "4px 7px" }} disabled={i === sectionOrder.length - 1}><ChevronDown size={14} /></Btn>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Custom pages */}
+      <div>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 12 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: "#111827" }}>Custom Pages</div>
+          <Btn onClick={addPage} small><Plus size={13} /> New Page</Btn>
+        </div>
+        <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 14 }}>
+          Custom pages appear as nav links and open as full-screen views. Useful for Resources, Blog, FAQ, etc.
+        </p>
+        {customPages.length === 0 && (
+          <div style={{ textAlign: "center", padding: "24px 0", color: "#9ca3af", fontSize: 13, border: "1.5px dashed #e5e7eb", borderRadius: 10 }}>
+            No custom pages yet. Click "+ New Page" to add one.
+          </div>
+        )}
+        {customPages.map((page, i) => (
+          <Card key={page.id}>
+            <SectionHeader title={"📄 " + (page.navLabel || "Untitled Page")} onDelete={() => removePage(i)} deleteLabel="Delete Page" />
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 10 }}>
+              <Field label="Nav link label">
+                <input style={inputStyle} value={page.navLabel} placeholder="e.g. Resources"
+                  onChange={e => updatePage(i, "navLabel", e.target.value)} />
+              </Field>
+              <Field label="URL slug" hint={`Accessible at site.com/#page-${page.navLabel?.toLowerCase().replace(/\s+/g, "-") || "..."}`}>
+                <input style={{ ...inputStyle, background: "#f9fafb", color: "#6b7280" }}
+                  value={page.navLabel?.toLowerCase().replace(/\s+/g, "-") || ""}
+                  readOnly />
+              </Field>
+            </div>
+            <Field label="Page heading">
+              <input style={inputStyle} value={page.heading} placeholder="Page title shown on the page"
+                onChange={e => updatePage(i, "heading", e.target.value)} />
+            </Field>
+            <Field label="Sub-heading">
+              <input style={inputStyle} value={page.subheading} placeholder="Optional subtitle"
+                onChange={e => updatePage(i, "subheading", e.target.value)} />
+            </Field>
+            <Field label="Body content" hint="Plain text. Use blank lines to separate paragraphs.">
+              <textarea style={textareaStyle} rows={6} value={page.body} placeholder="Write your page content here…"
+                onChange={e => updatePage(i, "body", e.target.value)} />
+            </Field>
+          </Card>
+        ))}
+      </div>
+    </>
   );
 }
 
 function SettingsEditor({ content, onChange }) {
   return (
-    <div>
+    <>
       <Field label="YouTube Channel URL">
-        <input style={inputStyle} value={content.youtubeChannelUrl}
-          onChange={e => onChange({ ...content, youtubeChannelUrl: e.target.value })} />
+        <input style={inputStyle} value={content.youtubeChannelUrl} onChange={e => onChange({ ...content, youtubeChannelUrl: e.target.value })} />
       </Field>
-      <Field label="Contact Email">
-        <input style={inputStyle} type="email" value={content.contactEmail}
-          onChange={e => onChange({ ...content, contactEmail: e.target.value })} />
+      <Field label="Contact email">
+        <input style={inputStyle} type="email" value={content.contactEmail} onChange={e => onChange({ ...content, contactEmail: e.target.value })} />
       </Field>
-      <Field label="Admin Password">
-        <input style={inputStyle} type="text" value={content.adminPassword}
-          onChange={e => onChange({ ...content, adminPassword: e.target.value })} />
-        <p style={{ fontSize: 12, color: "#9ca3af", marginTop: 4 }}>
-          ⚠ Change this before going live. This protects the /admin panel.
-        </p>
+      <Field label="Admin password" hint="⚠ Change this before going live. Protects the admin panel.">
+        <input style={inputStyle} value={content.adminPassword} onChange={e => onChange({ ...content, adminPassword: e.target.value })} />
       </Field>
-    </div>
+    </>
   );
 }
 
@@ -314,31 +418,23 @@ function SettingsEditor({ content, onChange }) {
 
 function PasswordGate({ correctPassword, onSuccess }) {
   const [pw, setPw] = useState("");
-  const [error, setError] = useState(false);
-
+  const [err, setErr] = useState(false);
   const attempt = () => {
-    if (pw === correctPassword) {
-      onSuccess();
-    } else {
-      setError(true);
-      setPw("");
-      setTimeout(() => setError(false), 2000);
-    }
+    if (pw === correctPassword) { onSuccess(); }
+    else { setErr(true); setPw(""); setTimeout(() => setErr(false), 2000); }
   };
-
   return (
     <div style={{ minHeight: "100vh", background: "#0f172a", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
-      <div style={{ background: "#1e293b", borderRadius: 20, padding: 40, width: "100%", maxWidth: 380, textAlign: "center" }}>
-        <div style={{ fontSize: 48, marginBottom: 16 }}><Lock size={40} color="#60a5fa" /></div>
+      <div style={{ background: "#1e293b", borderRadius: 20, padding: 40, width: "100%", maxWidth: 360, textAlign: "center" }}>
+        <Lock size={40} color="#60a5fa" style={{ marginBottom: 16 }} />
         <h2 style={{ color: "#fff", fontSize: 22, fontWeight: 800, marginBottom: 6 }}>Admin Panel</h2>
-        <p style={{ color: "#64748b", fontSize: 14, marginBottom: 28 }}>Enter your password to continue</p>
-        <input type="password" value={pw} onChange={e => setPw(e.target.value)}
-          onKeyDown={e => e.key === "Enter" && attempt()}
-          placeholder="Password"
-          style={{ ...inputStyle, marginBottom: 12, textAlign: "center", background: "#0f172a", border: "1.5px solid #334155", color: "#fff", borderColor: error ? "#ef4444" : "#334155" }} />
-        {error && <p style={{ color: "#f87171", fontSize: 13, marginBottom: 10 }}>Incorrect password. Try again.</p>}
+        <p style={{ color: "#64748b", fontSize: 14, marginBottom: 24 }}>Enter your password to continue</p>
+        <input type="password" value={pw} onChange={e => setPw(e.target.value)} onKeyDown={e => e.key === "Enter" && attempt()}
+          placeholder="Password" autoFocus
+          style={{ ...inputStyle, marginBottom: 10, textAlign: "center", background: "#0f172a", border: `1.5px solid ${err ? "#ef4444" : "#334155"}`, color: "#fff" }} />
+        {err && <p style={{ color: "#f87171", fontSize: 13, marginBottom: 8 }}>Incorrect — try again.</p>}
         <button onClick={attempt}
-          style={{ width: "100%", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, padding: "11px 0", fontWeight: 700, fontSize: 15, cursor: "pointer" }}>
+          style={{ width: "100%", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, padding: "11px 0", fontWeight: 700, fontSize: 15, cursor: "pointer", marginTop: 4 }}>
           Enter Admin
         </button>
       </div>
@@ -346,101 +442,96 @@ function PasswordGate({ correctPassword, onSuccess }) {
   );
 }
 
-// ─── Main Admin Panel ─────────────────────────────────────────────────────────
+// ─── Nav config ───────────────────────────────────────────────────────────────
 
-const SECTIONS = [
-  { id: "hero", label: "🏠 Hero" },
-  { id: "about", label: "👤 About" },
-  { id: "tools", label: "🛠 AI Tools" },
-  { id: "playlists", label: "▶ Playlists" },
-  { id: "services", label: "💼 Services" },
-  { id: "settings", label: "⚙ Settings" },
+const SIDEBAR = [
+  { id: "sections", label: "Sections & Pages", icon: <Layout size={15} /> },
+  { id: "hero",     label: "Hero",              icon: "🏠" },
+  { id: "about",    label: "About",             icon: "👤" },
+  { id: "tools",    label: "AI Tools",          icon: "🛠" },
+  { id: "playlists",label: "Playlists",         icon: "▶" },
+  { id: "services", label: "Services",          icon: "💼" },
+  { id: "settings", label: "Settings",          icon: <Settings size={15} /> },
 ];
+
+// ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function AdminPanel({ content, updateContent, resetContent, onClose }) {
   const [authed, setAuthed] = useState(false);
-  const [activeSection, setActiveSection] = useState("hero");
-  const [saved, setSaved] = useState(false);
+  const [active, setActive] = useState("sections");
+  const [flash, setFlash] = useState(false);
 
-  if (!authed) {
-    return <PasswordGate correctPassword={content.adminPassword} onSuccess={() => setAuthed(true)} />;
-  }
+  if (!authed) return <PasswordGate correctPassword={content.adminPassword} onSuccess={() => setAuthed(true)} />;
 
-  const handleSave = () => {
-    updateContent(content); // already saved via useContent on every change, but give visual feedback
-    setSaved(true);
-    setTimeout(() => setSaved(false), 2500);
-  };
+  const set = (field, val) => updateContent(prev => ({ ...prev, [field]: val }));
 
   const handleReset = () => {
-    if (window.confirm("Reset ALL content to defaults? This cannot be undone.")) {
-      resetContent();
-    }
+    if (window.confirm("Reset ALL content to defaults? This cannot be undone.")) resetContent();
   };
 
-  const setSection = (field, val) => updateContent(prev => ({ ...prev, [field]: val }));
+  const showFlash = () => { setFlash(true); setTimeout(() => setFlash(false), 2000); };
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f8fafc" }}>
-      {/* Admin header */}
-      <div style={{ background: "#0f172a", padding: "0 24px", height: 60, display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <span style={{ color: "#fff", fontWeight: 800, fontSize: 16 }}>⚙ Todd Ponsky — Admin</span>
-          <span style={{ background: "#1e293b", color: "#60a5fa", fontSize: 11, fontWeight: 600, padding: "2px 10px", borderRadius: 999 }}>
-            Changes auto-save
-          </span>
+    <div style={{ minHeight: "100vh", background: "#f8fafc", fontFamily: "Inter, system-ui, sans-serif" }}>
+
+      {/* Header */}
+      <div style={{ background: "#0f172a", height: 56, padding: "0 20px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 50 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+          <span style={{ color: "#fff", fontWeight: 800, fontSize: 15 }}>⚙ Admin Panel</span>
+          <span style={{ background: "#1e293b", color: "#60a5fa", fontSize: 10, fontWeight: 700, padding: "2px 9px", borderRadius: 999 }}>Auto-saves</span>
         </div>
-        <div style={{ display: "flex", gap: 10 }}>
-          {saved && <span style={{ color: "#4ade80", fontSize: 13, fontWeight: 600 }}>✓ Saved!</span>}
-          <Btn variant="ghost" small onClick={handleSave}><Save size={14} /> Save</Btn>
-          <Btn variant="ghost" small onClick={handleReset}><RotateCcw size={14} /> Reset</Btn>
-          <a href="/" target="_blank" rel="noopener noreferrer">
-            <Btn variant="ghost" small><Eye size={14} /> View Site</Btn>
+        <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          {flash && <span style={{ color: "#4ade80", fontSize: 12, fontWeight: 600 }}>✓ Saved</span>}
+          <Btn variant="ghost" small onClick={() => { updateContent(c => c); showFlash(); }}><Save size={13} /> Save</Btn>
+          <Btn variant="ghost" small onClick={handleReset}><RotateCcw size={13} /> Reset</Btn>
+          <a href="/" target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+            <Btn variant="ghost" small><Eye size={13} /> View Site</Btn>
           </a>
-          <Btn variant="danger" small onClick={onClose}><X size={14} /> Exit Admin</Btn>
+          <Btn variant="danger" small onClick={onClose}><X size={13} /> Exit</Btn>
         </div>
       </div>
 
-      {/* Layout */}
-      <div className="admin-layout" style={{ display: "flex", minHeight: "calc(100vh - 60px)" }}>
+      {/* Body */}
+      <div className="admin-layout" style={{ display: "flex", minHeight: "calc(100vh - 56px)" }}>
+
         {/* Sidebar */}
-        <aside className="admin-sidebar" style={{ background: "#1e293b", padding: 16 }}>
-          {SECTIONS.map((s) => (
-            <button key={s.id} onClick={() => setActiveSection(s.id)}
+        <aside className="admin-sidebar" style={{ background: "#1e293b", padding: "16px 12px", flexShrink: 0 }}>
+          {SIDEBAR.map(item => (
+            <button key={item.id} onClick={() => setActive(item.id)}
               style={{
-                display: "block", width: "100%", textAlign: "left", background: activeSection === s.id ? "#2563eb" : "transparent",
-                color: activeSection === s.id ? "#fff" : "#94a3b8", border: "none", borderRadius: 8, padding: "10px 14px",
-                fontSize: 14, fontWeight: 600, cursor: "pointer", marginBottom: 4,
+                display: "flex", alignItems: "center", gap: 9, width: "100%", textAlign: "left",
+                background: active === item.id ? "#2563eb" : "transparent",
+                color: active === item.id ? "#fff" : "#94a3b8",
+                border: "none", borderRadius: 8, padding: "9px 12px", fontSize: 13, fontWeight: 600, cursor: "pointer", marginBottom: 3,
               }}>
-              {s.label}
+              <span style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>{item.icon}</span>
+              {item.label}
             </button>
           ))}
         </aside>
 
-        {/* Content area */}
-        <main style={{ flex: 1, padding: 32, overflowY: "auto", maxWidth: 780 }}>
-          <h2 style={{ fontSize: 22, fontWeight: 800, color: "#0f172a", marginBottom: 24 }}>
-            {SECTIONS.find(s => s.id === activeSection)?.label}
+        {/* Editor pane */}
+        <main style={{ flex: 1, padding: "28px 32px", overflowY: "auto" }}>
+          <h2 style={{ fontSize: 20, fontWeight: 800, color: "#111827", marginBottom: 22 }}>
+            {SIDEBAR.find(s => s.id === active)?.label}
           </h2>
 
-          {activeSection === "hero" && (
-            <HeroEditor data={content.hero} onChange={val => setSection("hero", val)} />
+          {active === "sections" && (
+            <SectionsManager
+              sectionOrder={content.sectionOrder}
+              sectionVisibility={content.sectionVisibility}
+              customPages={content.customPages}
+              onOrderChange={v => set("sectionOrder", v)}
+              onVisibilityChange={v => set("sectionVisibility", v)}
+              onPagesChange={v => set("customPages", v)}
+            />
           )}
-          {activeSection === "about" && (
-            <AboutEditor data={content.about} onChange={val => setSection("about", val)} />
-          )}
-          {activeSection === "tools" && (
-            <ToolsEditor tools={content.tools} onChange={val => setSection("tools", val)} />
-          )}
-          {activeSection === "playlists" && (
-            <PlaylistsEditor playlists={content.playlists} onChange={val => setSection("playlists", val)} />
-          )}
-          {activeSection === "services" && (
-            <ServicesEditor services={content.services} onChange={val => setSection("services", val)} />
-          )}
-          {activeSection === "settings" && (
-            <SettingsEditor content={content} onChange={updateContent} />
-          )}
+          {active === "hero"      && <HeroEditor     data={content.hero}      onChange={v => set("hero", v)} />}
+          {active === "about"     && <AboutEditor    data={content.about}     onChange={v => set("about", v)} />}
+          {active === "tools"     && <ToolsEditor    tools={content.tools}    onChange={v => set("tools", v)} />}
+          {active === "playlists" && <PlaylistsEditor playlists={content.playlists} onChange={v => set("playlists", v)} />}
+          {active === "services"  && <ServicesEditor services={content.services} onChange={v => set("services", v)} />}
+          {active === "settings"  && <SettingsEditor content={content} onChange={updateContent} />}
         </main>
       </div>
     </div>

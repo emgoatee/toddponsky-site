@@ -149,6 +149,29 @@ export const DEFAULT_CONTENT = {
   youtubeChannelUrl: "https://youtube.com/@toddponsky",
   contactEmail: "todd@toddponsky.com",
   adminPassword: "todd2025",   // ← change this before deploying!
+
+  // Controls which built-in sections appear and in what order in the nav/page
+  sectionOrder: ["about", "tools", "learn", "services", "contact"],
+  sectionVisibility: {
+    about: true,
+    tools: true,
+    learn: true,
+    services: true,
+    contact: true,
+  },
+
+  // Custom standalone pages — each appears as a nav link and full-page view
+  // id: unique slug used in URL hash (e.g. "resources" → site.com/#page-resources)
+  customPages: [
+    // Example — delete or keep:
+    {
+      id: "resources",
+      navLabel: "Resources",
+      heading: "Free Resources",
+      subheading: "Guides, templates, and tools to help you get started with AI.",
+      body: "Add your content here. You can write multiple paragraphs, list links, embed anything — this is a free-form text area.\n\nExample: Download our AI Starter Checklist, browse our recommended reading list, or grab a prompt template library.",
+    },
+  ],
 };
 
 export const TOOL_CATEGORIES = [

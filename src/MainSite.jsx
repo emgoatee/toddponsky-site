@@ -1,13 +1,14 @@
 import { useState } from "react";
-import { Search, Youtube, ExternalLink, ChevronRight, Play, Menu, X, Settings } from "lucide-react";
+import { Search, Youtube, ExternalLink, ChevronRight, Play, Menu, X, Settings, ArrowLeft } from "lucide-react";
 
-const NAV_LINKS = [
-  { id: "about", label: "About" },
-  { id: "tools", label: "AI Tools" },
-  { id: "learn", label: "Learn" },
-  { id: "services", label: "Services" },
-  { id: "contact", label: "Contact" },
-];
+// Built-in section nav labels
+const SECTION_LABELS = {
+  about:    "About",
+  tools:    "AI Tools",
+  learn:    "Learn",
+  services: "Services",
+  contact:  "Contact",
+};
 
 const ALL_CATEGORIES = ["All", "Writing & Content", "Image Generation", "Video", "Productivity", "Audio & Voice", "Analytics & Data"];
 
@@ -18,10 +19,29 @@ export default function MainSite({ content, onAdminClick }) {
   const [activePlaylist, setActivePlaylist] = useState(content.playlists[0]?.id || "");
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [formSent, setFormSent] = useState(false);
+  const [activePage, setActivePage] = useState(null); // id of custom page being viewed
+
+  // Build nav from section order + visibility + custom pages
+  const visibleSections = (content.sectionOrder || []).filter(id => content.sectionVisibility?.[id] !== false);
+  const navLinks = [
+    ...visibleSections.map(id => ({ id, label: SECTION_LABELS[id], type: "section" })),
+    ...(content.customPages || []).map(p => ({ id: p.id, label: p.navLabel, type: "page" })),
+  ];
 
   const scrollTo = (id) => {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
     setMobileOpen(false);
+  };
+
+  const handleNavClick = (link) => {
+    if (link.type === "page") {
+      setActivePage(link.id);
+      setMobileOpen(false);
+      window.scrollTo(0, 0);
+    } else {
+      setActivePage(null);
+      scrollTo(link.id);
+    }
   };
 
   const filteredTools = content.tools.filter((tool) => {
@@ -39,6 +59,36 @@ export default function MainSite({ content, onAdminClick }) {
   };
 
   const { hero, about, services, youtubeChannelUrl } = content;
+  const isVisible = (id) => content.sectionVisibility?.[id] !== false;
+
+  // ── Custom page renderer ──
+  if (activePage) {
+    const page = (content.customPages || []).find(p => p.id === activePage);
+    if (page) return (
+      <div style={{ minHeight: "100vh", background: "#fff" }}>
+        <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: "rgba(255,255,255,0.97)", backdropFilter: "blur(8px)", borderBottom: "1px solid #e2e8f0" }}>
+          <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+            <button onClick={() => { setActivePage(null); }} style={{ fontWeight: 800, fontSize: 20, color: "#0f172a", background: "none", border: "none", cursor: "pointer" }}>
+              Todd Ponsky
+            </button>
+            <button onClick={() => setActivePage(null)}
+              style={{ display: "flex", alignItems: "center", gap: 6, background: "#f1f5f9", border: "none", borderRadius: 8, padding: "8px 14px", cursor: "pointer", fontSize: 14, fontWeight: 600, color: "#475569" }}>
+              <ArrowLeft size={15} /> Back to site
+            </button>
+          </div>
+        </nav>
+        <div style={{ maxWidth: 760, margin: "0 auto", padding: "120px 24px 80px" }}>
+          <h1 style={{ fontSize: 42, fontWeight: 800, color: "#0f172a", marginBottom: 12, letterSpacing: "-0.5px" }}>{page.heading}</h1>
+          {page.subheading && <p style={{ fontSize: 18, color: "#64748b", marginBottom: 36 }}>{page.subheading}</p>}
+          <div style={{ borderTop: "1px solid #e2e8f0", paddingTop: 36 }}>
+            {page.body.split("\n\n").map((para, i) => (
+              <p key={i} style={{ fontSize: 17, color: "#374151", lineHeight: 1.8, marginBottom: 20 }}>{para}</p>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div style={{ minHeight: "100vh", background: "#fff" }}>
@@ -46,17 +96,17 @@ export default function MainSite({ content, onAdminClick }) {
       {/* ── NAV ── */}
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: "rgba(255,255,255,0.97)", backdropFilter: "blur(8px)", borderBottom: "1px solid #e2e8f0" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <button onClick={() => scrollTo("hero")} style={{ fontWeight: 800, fontSize: 20, color: "#0f172a", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => { setActivePage(null); scrollTo("hero"); }} style={{ fontWeight: 800, fontSize: 20, color: "#0f172a", background: "none", border: "none", cursor: "pointer" }}>
             Todd Ponsky
           </button>
-          <div className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 32 }}>
-            {NAV_LINKS.map((l) => (
-              <button key={l.id} onClick={() => scrollTo(l.id)}
+          <div className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 28 }}>
+            {navLinks.map((l) => (
+              <button key={l.id} onClick={() => handleNavClick(l)}
                 style={{ background: "none", border: "none", cursor: "pointer", fontSize: 14, fontWeight: 500, color: "#475569" }}>
                 {l.label}
               </button>
             ))}
-            <button onClick={() => scrollTo("contact")}
+            <button onClick={() => handleNavClick({ id: "contact", type: "section" })}
               style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
               Work With Me
             </button>
@@ -72,8 +122,8 @@ export default function MainSite({ content, onAdminClick }) {
         </div>
         {mobileOpen && (
           <div style={{ background: "#fff", borderTop: "1px solid #e2e8f0", padding: "16px 24px", display: "flex", flexDirection: "column", gap: 16 }}>
-            {NAV_LINKS.map((l) => (
-              <button key={l.id} onClick={() => scrollTo(l.id)} style={{ background: "none", border: "none", cursor: "pointer", textAlign: "left", fontSize: 15, fontWeight: 500, color: "#334155" }}>
+            {navLinks.map((l) => (
+              <button key={l.id} onClick={() => handleNavClick(l)} style={{ background: "none", border: "none", cursor: "pointer", textAlign: "left", fontSize: 15, fontWeight: 500, color: "#334155" }}>
                 {l.label}
               </button>
             ))}
@@ -129,7 +179,7 @@ export default function MainSite({ content, onAdminClick }) {
       </section>
 
       {/* ── ABOUT ── */}
-      <section id="about" style={{ padding: "96px 24px", background: "#f8fafc" }}>
+      {isVisible("about") && <section id="about" style={{ padding: "96px 24px", background: "#f8fafc" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 64, alignItems: "center" }}>
             <div style={{ flex: "1 1 420px" }}>
@@ -157,7 +207,7 @@ export default function MainSite({ content, onAdminClick }) {
       </section>
 
       {/* ── AI TOOLS ── */}
-      <section id="tools" style={{ padding: "96px 24px", background: "#fff" }}>
+      {isVisible("tools") && <section id="tools" style={{ padding: "96px 24px", background: "#fff" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Curated Resources</span>
@@ -201,10 +251,10 @@ export default function MainSite({ content, onAdminClick }) {
             <div style={{ textAlign: "center", padding: "64px 0", color: "#94a3b8" }}>No tools match your search.</div>
           )}
         </div>
-      </section>
+      </section>}
 
       {/* ── LEARN ── */}
-      <section id="learn" style={{ padding: "96px 24px", background: "#0f172a" }}>
+      {isVisible("learn") && <section id="learn" style={{ padding: "96px 24px", background: "#0f172a" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span style={{ color: "#60a5fa", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Free Education</span>
@@ -256,10 +306,10 @@ export default function MainSite({ content, onAdminClick }) {
             </>
           )}
         </div>
-      </section>
+      </section>}
 
       {/* ── SERVICES ── */}
-      <section id="services" style={{ padding: "96px 24px", background: "#fff" }}>
+      {isVisible("services") && <section id="services" style={{ padding: "96px 24px", background: "#fff" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Work Together</span>
@@ -293,10 +343,10 @@ export default function MainSite({ content, onAdminClick }) {
             ))}
           </div>
         </div>
-      </section>
+      </section>}
 
       {/* ── CONTACT ── */}
-      <section id="contact" style={{ padding: "96px 24px", background: "#f8fafc" }}>
+      {isVisible("contact") && <section id="contact" style={{ padding: "96px 24px", background: "#f8fafc" }}>
         <div style={{ maxWidth: 640, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 40 }}>
             <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Get in Touch</span>
@@ -347,7 +397,7 @@ export default function MainSite({ content, onAdminClick }) {
             </form>
           )}
         </div>
-      </section>
+      </section>}
 
       {/* ── FOOTER ── */}
       <footer style={{ background: "#0f172a", padding: "48px 24px" }}>
@@ -357,8 +407,8 @@ export default function MainSite({ content, onAdminClick }) {
             <div style={{ color: "#475569", fontSize: 13 }}>AI Educator · Consultant · Speaker</div>
           </div>
           <div style={{ display: "flex", gap: 28, flexWrap: "wrap" }}>
-            {NAV_LINKS.map((l) => (
-              <button key={l.id} onClick={() => scrollTo(l.id)} style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b", fontSize: 13 }}>{l.label}</button>
+            {navLinks.map((l) => (
+              <button key={l.id} onClick={() => handleNavClick(l)} style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b", fontSize: 13 }}>{l.label}</button>
             ))}
           </div>
           <div style={{ color: "#334155", fontSize: 12 }}>© {new Date().getFullYear()} Todd Ponsky. All rights reserved.</div>
