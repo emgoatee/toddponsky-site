@@ -15,8 +15,18 @@ export default async function handler(req, res) {
     return res.status(400).json({ error: "Missing channelId or playlistId query parameter. Set your YouTube Channel ID in Admin → Settings." });
   }
 
-  const rssUrl = playlistId
-    ? `https://www.youtube.com/feeds/videos.xml?playlist_id=${playlistId}`
+  // Every YouTube channel has an auto-generated Shorts-only playlist.
+  // Its ID is derived by replacing the "UC" prefix with "UUSH".
+  // e.g. UCxxxxxx → UUSHxxxxxx
+  // If a manual playlistId is provided, use that instead.
+  const shortsPlaylistId = playlistId
+    ? playlistId
+    : channelId.startsWith("UC")
+      ? "UUSH" + channelId.slice(2)
+      : null;
+
+  const rssUrl = shortsPlaylistId
+    ? `https://www.youtube.com/feeds/videos.xml?playlist_id=${shortsPlaylistId}`
     : `https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`;
 
   try {
@@ -41,10 +51,9 @@ export default async function handler(req, res) {
         title,
         published,
         views: parseInt(views, 10),
-        // Use portrait thumbnail for Shorts; falls back gracefully for regular videos
         thumbnail: `https://img.youtube.com/vi/${id}/0.jpg`,
+        // Always link to /shorts/ URL since we're fetching the Shorts playlist
         shortsUrl: `https://www.youtube.com/shorts/${id}`,
-        watchUrl:  `https://www.youtube.com/watch?v=${id}`,
       };
     }).filter(v => v.id);
 
