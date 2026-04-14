@@ -438,7 +438,7 @@ export default function MainSite({ content, onAdminClick }) {
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span style={{ color: "#60a5fa", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Free Education</span>
-            <h2 style={{ fontSize: 38, fontWeight: 800, color: "#fff", marginTop: 8, marginBottom: 12 }}>Learn AI with Todd</h2>
+            <h2 style={{ fontSize: 38, fontWeight: 800, color: "#fff", marginTop: 8, marginBottom: 12 }}>AI for Everyone</h2>
             <p style={{ fontSize: 17, color: "#94a3b8", maxWidth: 520, margin: "0 auto" }}>
               Structured playlists to take you from AI-curious to AI-confident — at your own pace.
             </p>
