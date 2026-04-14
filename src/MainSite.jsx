@@ -316,16 +316,18 @@ export default function MainSite({ content, onAdminClick }) {
                   <Play size={16} fill="white" /> {hero.ctaSecondary}
                 </button>
               </div>
-              <div style={{ display: "flex", gap: 36, marginTop: 52, paddingTop: 36, borderTop: "1px solid rgba(255,255,255,0.1)", flexWrap: "wrap" }}>
-                {hero.stats.map(({ num, label }) => (
-                  <div key={label}>
-                    <div style={{ fontSize: 30, fontWeight: 800, color: "#60a5fa" }}>{num}</div>
-                    <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 2 }}>{label}</div>
-                  </div>
-                ))}
-              </div>
+              {hero.showStats !== false && (
+                <div style={{ display: "flex", gap: 36, marginTop: 52, paddingTop: 36, borderTop: "1px solid rgba(255,255,255,0.1)", flexWrap: "wrap" }}>
+                  {hero.stats.map(({ num, label }) => (
+                    <div key={label}>
+                      <div style={{ fontSize: 30, fontWeight: 800, color: "#60a5fa" }}>{num}</div>
+                      <div style={{ fontSize: 12, color: "#94a3b8", marginTop: 2 }}>{label}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
-            <div style={{ flex: "0 0 auto" }}>
+            {!isMobile && <div style={{ flex: "0 0 auto" }}>
               {hero.photoUrl ? (
                 <img
                   src={hero.photoUrl}
@@ -348,7 +350,7 @@ export default function MainSite({ content, onAdminClick }) {
                   <p style={{ textAlign: "center", color: "#475569", fontSize: 12, marginTop: 8 }}>Add photo in Admin → Hero</p>
                 </>
               )}
-            </div>
+            </div>}
           </div>
         </div>
       </section>

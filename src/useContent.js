@@ -8,9 +8,16 @@ function loadContent() {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      // Shallow-merge with defaults so any new top-level fields
-      // added after the initial save are always present.
-      return { ...DEFAULT_CONTENT, ...parsed };
+      // Deep-merge one level so new fields added to nested objects
+      // (e.g. hero.photoUrl, hero.showStats) are never lost when
+      // localStorage has an older snapshot of that object.
+      return {
+        ...DEFAULT_CONTENT,
+        ...parsed,
+        hero:    { ...DEFAULT_CONTENT.hero,    ...(parsed.hero    || {}) },
+        about:   { ...DEFAULT_CONTENT.about,   ...(parsed.about   || {}) },
+        sectionVisibility: { ...DEFAULT_CONTENT.sectionVisibility, ...(parsed.sectionVisibility || {}) },
+      };
     }
   } catch (e) {
     console.warn("Could not load saved content:", e);
