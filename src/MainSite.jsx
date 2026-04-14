@@ -455,7 +455,7 @@ export default function MainSite({ content, onAdminClick }) {
             <>
               <p style={{ textAlign: "center", color: "#64748b", fontSize: 15, marginBottom: 28 }}>{currentPlaylist.description}</p>
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
-                {(!learnExpanded ? currentPlaylist.videos.slice(0, isMobile ? 1 : 4) : currentPlaylist.videos).map((video, idx) => (
+                {(!learnExpanded ? currentPlaylist.videos.slice(0, isMobile ? 1 : 3) : currentPlaylist.videos).map((video, idx) => (
                   <div key={idx} style={{ background: "#1e293b", borderRadius: 14, overflow: "hidden", cursor: "pointer" }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "#243044"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "#1e293b"; }}>
@@ -477,8 +477,8 @@ export default function MainSite({ content, onAdminClick }) {
                   </div>
                 ))}
               </div>
-              {currentPlaylist.videos.length > (isMobile ? 1 : 4) && (
-                <MoreButton expanded={learnExpanded} count={currentPlaylist.videos.length - (isMobile ? 1 : 4)} onClick={() => setLearnExpanded(e => !e)} />
+              {currentPlaylist.videos.length > (isMobile ? 1 : 3) && (
+                <MoreButton expanded={learnExpanded} count={currentPlaylist.videos.length - (isMobile ? 1 : 3)} onClick={() => setLearnExpanded(e => !e)} />
               )}
               <div style={{ textAlign: "center", marginTop: 40 }}>
                 <a href={youtubeChannelUrl} target="_blank" rel="noopener noreferrer"
