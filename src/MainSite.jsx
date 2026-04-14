@@ -1,11 +1,116 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Search, Youtube, ExternalLink, ChevronRight, Play, Menu, X, Settings, ArrowLeft } from "lucide-react";
+
+// ─── Shorts feed component ────────────────────────────────────────────────────
+function ShortsSection() {
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch("/api/youtube")
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) throw new Error(data.error);
+        setVideos(data.videos || []);
+      })
+      .catch(err => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  return (
+    <section id="shorts" style={{ padding: "96px 24px", background: "#0f172a" }}>
+      <div style={{ maxWidth: 1120, margin: "0 auto" }}>
+        <div style={{ textAlign: "center", marginBottom: 48 }}>
+          <span style={{ color: "#f87171", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>YouTube Shorts</span>
+          <h2 style={{ fontSize: 38, fontWeight: 800, color: "#fff", marginTop: 8, marginBottom: 12 }}>Quick AI Tips</h2>
+          <p style={{ fontSize: 17, color: "#94a3b8", maxWidth: 520, margin: "0 auto" }}>
+            Bite-sized AI insights — under 60 seconds each.
+          </p>
+        </div>
+
+        {loading && (
+          <div style={{ textAlign: "center", padding: "48px 0" }}>
+            <div style={{ display: "inline-flex", gap: 8 }}>
+              {[0,1,2].map(i => (
+                <div key={i} style={{ width: 160, height: 284, background: "#1e293b", borderRadius: 14,
+                  animation: `pulse 1.5s ease-in-out ${i * 0.2}s infinite alternate` }} />
+              ))}
+            </div>
+            <p style={{ color: "#475569", marginTop: 16, fontSize: 14 }}>Loading shorts…</p>
+          </div>
+        )}
+
+        {error && (
+          <div style={{ textAlign: "center", padding: "48px 0", color: "#f87171" }}>
+            <p style={{ fontSize: 15 }}>⚠ Couldn't load shorts: {error}</p>
+            <p style={{ fontSize: 13, color: "#475569", marginTop: 8 }}>Make sure YOUTUBE_CHANNEL_ID is set in Vercel environment variables.</p>
+          </div>
+        )}
+
+        {!loading && !error && videos.length > 0 && (
+          <>
+            {/* Horizontal scroll on small screens, wrap on large */}
+            <div style={{ display: "flex", gap: 16, overflowX: "auto", paddingBottom: 8,
+              flexWrap: "wrap", justifyContent: "center" }}>
+              {videos.map(video => (
+                <a key={video.id} href={video.shortsUrl} target="_blank" rel="noopener noreferrer"
+                  style={{ textDecoration: "none", flexShrink: 0, width: 160 }}>
+                  <div style={{ position: "relative", width: 160, height: 284, borderRadius: 14,
+                    overflow: "hidden", background: "#1e293b" }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.transition = "transform 0.2s"; }}
+                    onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }}>
+                    <img src={video.thumbnail} alt={video.title}
+                      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
+                    {/* Play overlay */}
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.7) 40%, transparent 70%)" }} />
+                    <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
+                      width: 44, height: 44, background: "rgba(220,38,38,0.9)", borderRadius: "50%",
+                      display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <Play size={18} color="#fff" fill="#fff" style={{ marginLeft: 3 }} />
+                    </div>
+                    {/* Title */}
+                    <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px 10px 12px" }}>
+                      <p style={{ color: "#fff", fontSize: 12, fontWeight: 600, lineHeight: 1.4,
+                        display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", margin: 0 }}>
+                        {video.title}
+                      </p>
+                      {video.views > 0 && (
+                        <p style={{ color: "#94a3b8", fontSize: 10, marginTop: 4, margin: "4px 0 0" }}>
+                          {video.views.toLocaleString()} views
+                        </p>
+                      )}
+                    </div>
+                    {/* Shorts badge */}
+                    <div style={{ position: "absolute", top: 8, right: 8, background: "#dc2626",
+                      color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4, letterSpacing: "0.05em" }}>
+                      SHORT
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+            <div style={{ textAlign: "center", marginTop: 32 }}>
+              <a href="https://youtube.com/@toddponsky/shorts" target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#dc2626",
+                  color: "#fff", textDecoration: "none", borderRadius: 10, padding: "12px 24px", fontWeight: 700, fontSize: 14 }}>
+                <Youtube size={18} /> See All Shorts
+              </a>
+            </div>
+          </>
+        )}
+      </div>
+      <style>{`@keyframes pulse { from { opacity: 0.4 } to { opacity: 0.8 } }`}</style>
+    </section>
+  );
+}
 
 // Built-in section nav labels
 const SECTION_LABELS = {
   about:    "About",
   tools:    "AI Tools",
   learn:    "Learn",
+  shorts:   "Shorts",
   services: "Services",
   contact:  "Contact",
 };
@@ -325,6 +430,9 @@ export default function MainSite({ content, onAdminClick }) {
           )}
         </div>
       </section>}
+
+      {/* ── SHORTS ── */}
+      {isVisible("shorts") && <ShortsSection />}
 
       {/* ── SERVICES ── */}
       {isVisible("services") && <section id="services" style={{ padding: "96px 24px", background: "#fff" }}>

@@ -321,6 +321,7 @@ const BUILT_IN_SECTIONS = [
   { id: "about",    label: "About",        icon: "👤" },
   { id: "tools",    label: "AI Tools",     icon: "🛠" },
   { id: "learn",    label: "Learn",        icon: "▶" },
+  { id: "shorts",   label: "Shorts Feed",  icon: "📱" },
   { id: "services", label: "Services",     icon: "💼" },
   { id: "contact",  label: "Contact",      icon: "✉" },
 ];

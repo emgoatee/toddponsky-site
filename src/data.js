@@ -6,7 +6,7 @@ export const DEFAULT_CONTENT = {
   hero: {
     badge: "AI Educator · Consultant · Speaker",
     headline: "Navigate the AI Revolution with Confidence.",
-    photoUrl: "/todd.png",   // ← paste a direct image URL here, or set it via Admin → Hero
+    photoUrl: "",   // ← paste a direct image URL here, or set it via Admin → Hero
     subheadline:
       "I help business leaders, teams, and curious professionals cut through the noise — understand what matters, adopt the right tools, and build AI-ready organizations.",
     ctaPrimary: "Work With Me",
@@ -152,13 +152,14 @@ export const DEFAULT_CONTENT = {
   adminPassword: "todd2025",   // ← change this before deploying!
 
   // Controls which built-in sections appear and in what order in the nav/page
-  sectionOrder: ["about", "tools", "learn", "services", "contact"],
+  sectionOrder: ["about", "tools", "learn", "shorts", "services", "contact"],
   sectionVisibility: {
-    about: true,
-    tools: true,
-    learn: true,
+    about:    true,
+    tools:    true,
+    learn:    true,
+    shorts:   true,
     services: true,
-    contact: true,
+    contact:  true,
   },
 
   // Custom standalone pages — each appears as a nav link and full-page view
