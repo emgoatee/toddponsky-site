@@ -2,13 +2,18 @@ import { useState, useEffect } from "react";
 import { Search, Youtube, ExternalLink, ChevronRight, Play, Menu, X, Settings, ArrowLeft } from "lucide-react";
 
 // ─── Shorts feed component ────────────────────────────────────────────────────
-function ShortsSection() {
+function ShortsSection({ channelId }) {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("/api/youtube")
+    if (!channelId) {
+      setError("No channel ID set. Add your YouTube Channel ID in Admin → Settings.");
+      setLoading(false);
+      return;
+    }
+    fetch(`/api/youtube?channelId=${encodeURIComponent(channelId)}`)
       .then(r => r.json())
       .then(data => {
         if (data.error) throw new Error(data.error);
@@ -16,7 +21,7 @@ function ShortsSection() {
       })
       .catch(err => setError(err.message))
       .finally(() => setLoading(false));
-  }, []);
+  }, [channelId]);
 
   return (
     <section id="shorts" style={{ padding: "96px 24px", background: "#0f172a" }}>
@@ -432,7 +437,7 @@ export default function MainSite({ content, onAdminClick }) {
       </section>}
 
       {/* ── SHORTS ── */}
-      {isVisible("shorts") && <ShortsSection />}
+      {isVisible("shorts") && <ShortsSection channelId={content.youtubeChannelId} />}
 
       {/* ── SERVICES ── */}
       {isVisible("services") && <section id="services" style={{ padding: "96px 24px", background: "#fff" }}>

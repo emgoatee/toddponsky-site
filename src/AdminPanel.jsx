@@ -422,6 +422,11 @@ function SettingsEditor({ content, onChange }) {
       <Field label="YouTube Channel URL">
         <input style={inputStyle} value={content.youtubeChannelUrl} onChange={e => onChange({ ...content, youtubeChannelUrl: e.target.value })} />
       </Field>
+      <Field label="YouTube Channel ID" hint="Starts with UC... — find it on YouTube: your channel → About → Share → Copy channel ID. Powers the Shorts feed.">
+        <input style={inputStyle} placeholder="UCxxxxxxxxxxxxxxxxxxxx"
+          value={content.youtubeChannelId || ""}
+          onChange={e => onChange({ ...content, youtubeChannelId: e.target.value })} />
+      </Field>
       <Field label="Contact email">
         <input style={inputStyle} type="email" value={content.contactEmail} onChange={e => onChange({ ...content, contactEmail: e.target.value })} />
       </Field>

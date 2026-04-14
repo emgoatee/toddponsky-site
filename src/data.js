@@ -148,6 +148,8 @@ export const DEFAULT_CONTENT = {
   ],
 
   youtubeChannelUrl: "https://youtube.com/@toddponsky",
+  // Your channel ID (starts with UC...) — find it at youtube.com → your channel → About → Share → Copy channel ID
+  youtubeChannelId: "",
   contactEmail: "todd@toddponsky.com",
   adminPassword: "todd2025",   // ← change this before deploying!
 
