@@ -1,11 +1,51 @@
 import { useState, useEffect } from "react";
-import { Search, Youtube, ExternalLink, ChevronRight, Play, Menu, X, Settings, ArrowLeft } from "lucide-react";
+import { Search, Youtube, ExternalLink, ChevronRight, Play, Menu, X, Settings, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+
+// ─── Mobile helpers ───────────────────────────────────────────────────────────
+function useIsMobile() {
+  const [mobile, setMobile] = useState(() => window.innerWidth <= 768);
+  useEffect(() => {
+    const fn = () => setMobile(window.innerWidth <= 768);
+    window.addEventListener("resize", fn);
+    return () => window.removeEventListener("resize", fn);
+  }, []);
+  return mobile;
+}
+
+function MoreButton({ expanded, count, onClick }) {
+  return (
+    <div style={{ textAlign: "center", marginTop: 20 }}>
+      <button onClick={onClick}
+        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.08)",
+          color: "#e2e8f0", border: "1.5px solid rgba(255,255,255,0.15)", borderRadius: 10,
+          padding: "10px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
+        {expanded ? <><ChevronUp size={15} /> Show Less</> : <><ChevronDown size={15} /> {count} More</>}
+      </button>
+    </div>
+  );
+}
+
+function MoreButtonDark({ expanded, count, onClick }) {
+  return (
+    <div style={{ textAlign: "center", marginTop: 20 }}>
+      <button onClick={onClick}
+        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#f1f5f9",
+          color: "#0f172a", border: "none", borderRadius: 10,
+          padding: "10px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
+        {expanded ? <><ChevronUp size={15} /> Show Less</> : <><ChevronDown size={15} /> {count} More</>}
+      </button>
+    </div>
+  );
+}
 
 // ─── Shorts feed component ────────────────────────────────────────────────────
 function ShortsSection({ channelId }) {
   const [videos, setVideos] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expanded, setExpanded] = useState(false);
+  const isMobile = useIsMobile();
+  const visibleVideos = isMobile && !expanded ? videos.slice(0, 1) : videos;
 
   useEffect(() => {
     if (!channelId) {
@@ -55,10 +95,9 @@ function ShortsSection({ channelId }) {
 
         {!loading && !error && videos.length > 0 && (
           <>
-            {/* 5×2 grid on desktop, 2 cols on mobile */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}
-              className="shorts-grid">
-              {videos.map(video => (
+            {/* 5×2 grid on desktop, 1 col on mobile (collapsed) */}
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(5, 1fr)", gap: 16 }}>
+              {visibleVideos.map(video => (
                 <a key={video.id} href={video.shortsUrl} target="_blank" rel="noopener noreferrer"
                   style={{ textDecoration: "none" }}>
                   <div style={{ position: "relative", width: "100%", aspectRatio: "9/16", borderRadius: 14,
@@ -96,7 +135,10 @@ function ShortsSection({ channelId }) {
                 </a>
               ))}
             </div>
-            <div style={{ textAlign: "center", marginTop: 32 }}>
+            {isMobile && videos.length > 1 && (
+              <MoreButton expanded={expanded} count={videos.length - 1} onClick={() => setExpanded(e => !e)} />
+            )}
+            <div style={{ textAlign: "center", marginTop: 24 }}>
               <a href="https://youtube.com/@toddponsky/shorts" target="_blank" rel="noopener noreferrer"
                 style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#dc2626",
                   color: "#fff", textDecoration: "none", borderRadius: 10, padding: "12px 24px", fontWeight: 700, fontSize: 14 }}>
@@ -130,7 +172,11 @@ export default function MainSite({ content, onAdminClick }) {
   const [activePlaylist, setActivePlaylist] = useState(content.playlists[0]?.id || "");
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [formSent, setFormSent] = useState(false);
-  const [activePage, setActivePage] = useState(null); // id of custom page being viewed
+  const [activePage, setActivePage] = useState(null);
+  const [toolsExpanded, setToolsExpanded] = useState(false);
+  const [learnExpanded, setLearnExpanded] = useState(false);
+  const [servicesExpanded, setServicesExpanded] = useState(false);
+  const isMobile = useIsMobile();
 
   // Build nav from section order + visibility + custom pages
   const visibleSections = (content.sectionOrder || []).filter(id => content.sectionVisibility?.[id] !== false);
@@ -358,8 +404,8 @@ export default function MainSite({ content, onAdminClick }) {
               </button>
             ))}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
-            {filteredTools.map((tool) => (
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
+            {(isMobile && !toolsExpanded ? filteredTools.slice(0, 1) : filteredTools).map((tool) => (
               <a key={tool.name} href={tool.url} target="_blank" rel="noopener noreferrer"
                 style={{ background: "#f8fafc", border: "1.5px solid #e2e8f0", borderRadius: 14, padding: 20, textDecoration: "none", display: "block" }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#93c5fd"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(37,99,235,0.1)"; }}
@@ -378,6 +424,9 @@ export default function MainSite({ content, onAdminClick }) {
           </div>
           {filteredTools.length === 0 && (
             <div style={{ textAlign: "center", padding: "64px 0", color: "#94a3b8" }}>No tools match your search.</div>
+          )}
+          {isMobile && filteredTools.length > 1 && (
+            <MoreButtonDark expanded={toolsExpanded} count={filteredTools.length - 1} onClick={() => setToolsExpanded(e => !e)} />
           )}
         </div>
       </section>}
@@ -403,8 +452,8 @@ export default function MainSite({ content, onAdminClick }) {
           {currentPlaylist && (
             <>
               <p style={{ textAlign: "center", color: "#64748b", fontSize: 15, marginBottom: 28 }}>{currentPlaylist.description}</p>
-              <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
-                {currentPlaylist.videos.map((video, idx) => (
+              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+                {(isMobile && !learnExpanded ? currentPlaylist.videos.slice(0, 1) : currentPlaylist.videos).map((video, idx) => (
                   <div key={idx} style={{ background: "#1e293b", borderRadius: 14, overflow: "hidden", cursor: "pointer" }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "#243044"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "#1e293b"; }}>
@@ -426,6 +475,9 @@ export default function MainSite({ content, onAdminClick }) {
                   </div>
                 ))}
               </div>
+              {isMobile && currentPlaylist.videos.length > 1 && (
+                <MoreButton expanded={learnExpanded} count={currentPlaylist.videos.length - 1} onClick={() => setLearnExpanded(e => !e)} />
+              )}
               <div style={{ textAlign: "center", marginTop: 40 }}>
                 <a href={youtubeChannelUrl} target="_blank" rel="noopener noreferrer"
                   style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "#dc2626", color: "#fff", textDecoration: "none", borderRadius: 10, padding: "14px 28px", fontWeight: 700, fontSize: 15 }}>
@@ -450,8 +502,8 @@ export default function MainSite({ content, onAdminClick }) {
               Whether you need a strategy, hands-on training, or someone to inspire your whole company.
             </p>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(460px, 1fr))", gap: 24 }}>
-            {services.map((service) => (
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(460px, 1fr))", gap: 24 }}>
+            {(isMobile && !servicesExpanded ? services.slice(0, 1) : services).map((service) => (
               <div key={service.title} style={{ border: "1.5px solid #e2e8f0", borderRadius: 20, padding: 32 }}
                 onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(37,99,235,0.12)"; e.currentTarget.style.borderColor = "#93c5fd"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
@@ -474,6 +526,9 @@ export default function MainSite({ content, onAdminClick }) {
               </div>
             ))}
           </div>
+          {isMobile && services.length > 1 && (
+            <MoreButtonDark expanded={servicesExpanded} count={services.length - 1} onClick={() => setServicesExpanded(e => !e)} />
+          )}
         </div>
       </section>}
 
