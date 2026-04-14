@@ -405,7 +405,7 @@ export default function MainSite({ content, onAdminClick }) {
             ))}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
-            {(isMobile && !toolsExpanded ? filteredTools.slice(0, 1) : filteredTools).map((tool) => (
+            {(!toolsExpanded ? filteredTools.slice(0, isMobile ? 1 : 3) : filteredTools).map((tool) => (
               <a key={tool.name} href={tool.url} target="_blank" rel="noopener noreferrer"
                 style={{ background: "#f8fafc", border: "1.5px solid #e2e8f0", borderRadius: 14, padding: 20, textDecoration: "none", display: "block" }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#93c5fd"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(37,99,235,0.1)"; }}
@@ -425,8 +425,8 @@ export default function MainSite({ content, onAdminClick }) {
           {filteredTools.length === 0 && (
             <div style={{ textAlign: "center", padding: "64px 0", color: "#94a3b8" }}>No tools match your search.</div>
           )}
-          {isMobile && filteredTools.length > 1 && (
-            <MoreButtonDark expanded={toolsExpanded} count={filteredTools.length - 1} onClick={() => setToolsExpanded(e => !e)} />
+          {filteredTools.length > (isMobile ? 1 : 3) && (
+            <MoreButtonDark expanded={toolsExpanded} count={filteredTools.length - (isMobile ? 1 : 3)} onClick={() => setToolsExpanded(e => !e)} />
           )}
         </div>
       </section>}
@@ -453,7 +453,7 @@ export default function MainSite({ content, onAdminClick }) {
             <>
               <p style={{ textAlign: "center", color: "#64748b", fontSize: 15, marginBottom: 28 }}>{currentPlaylist.description}</p>
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
-                {(isMobile && !learnExpanded ? currentPlaylist.videos.slice(0, 1) : currentPlaylist.videos).map((video, idx) => (
+                {(!learnExpanded ? currentPlaylist.videos.slice(0, isMobile ? 1 : 4) : currentPlaylist.videos).map((video, idx) => (
                   <div key={idx} style={{ background: "#1e293b", borderRadius: 14, overflow: "hidden", cursor: "pointer" }}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "#243044"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.background = "#1e293b"; }}>
@@ -475,8 +475,8 @@ export default function MainSite({ content, onAdminClick }) {
                   </div>
                 ))}
               </div>
-              {isMobile && currentPlaylist.videos.length > 1 && (
-                <MoreButton expanded={learnExpanded} count={currentPlaylist.videos.length - 1} onClick={() => setLearnExpanded(e => !e)} />
+              {currentPlaylist.videos.length > (isMobile ? 1 : 4) && (
+                <MoreButton expanded={learnExpanded} count={currentPlaylist.videos.length - (isMobile ? 1 : 4)} onClick={() => setLearnExpanded(e => !e)} />
               )}
               <div style={{ textAlign: "center", marginTop: 40 }}>
                 <a href={youtubeChannelUrl} target="_blank" rel="noopener noreferrer"
@@ -503,7 +503,7 @@ export default function MainSite({ content, onAdminClick }) {
             </p>
           </div>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(460px, 1fr))", gap: 24 }}>
-            {(isMobile && !servicesExpanded ? services.slice(0, 1) : services).map((service) => (
+            {(!servicesExpanded ? services.slice(0, isMobile ? 1 : services.length) : services).map((service) => (
               <div key={service.title} style={{ border: "1.5px solid #e2e8f0", borderRadius: 20, padding: 32 }}
                 onMouseEnter={(e) => { e.currentTarget.style.boxShadow = "0 8px 30px rgba(37,99,235,0.12)"; e.currentTarget.style.borderColor = "#93c5fd"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.boxShadow = "none"; e.currentTarget.style.borderColor = "#e2e8f0"; }}>
