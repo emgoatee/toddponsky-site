@@ -11,6 +11,7 @@ export const DEFAULT_CONTENT = {
       "I help business leaders, teams, and curious professionals cut through the noise — understand what matters, adopt the right tools, and build AI-ready organizations.",
     ctaPrimary: "Work With Me",
     ctaSecondary: "Watch Free Content",
+    showStats: true,
     stats: [
       { num: "500+", label: "Clients Advised" },
       { num: "50+", label: "Workshops Delivered" },
@@ -149,19 +150,19 @@ export const DEFAULT_CONTENT = {
 
   youtubeChannelUrl: "https://youtube.com/@toddponsky",
   // Your channel ID (starts with UC...) — find it at youtube.com → your channel → About → Share → Copy channel ID
-  youtubeChannelId: "",
+  youtubeChannelId: "UC5_X-VV0ow3VvDT7SOcjzaw",
   contactEmail: "todd@toddponsky.com",
-  adminPassword: "todd2025",   // ← change this before deploying!
+  adminPassword: "SashaWade2026!",   // ← change this before deploying!
 
   // Controls which built-in sections appear and in what order in the nav/page
   sectionOrder: ["about", "tools", "learn", "shorts", "services", "contact"],
   sectionVisibility: {
-    about:    true,
-    tools:    true,
-    learn:    true,
-    shorts:   true,
+    about: true,
+    tools: true,
+    learn: true,
+    shorts: true,
     services: true,
-    contact:  true,
+    contact: true,
   },
 
   // Custom standalone pages — each appears as a nav link and full-page view
