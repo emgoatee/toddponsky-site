@@ -37,7 +37,7 @@ export default async function handler(req, res) {
     // Parse entries with simple regex — no external deps needed
     const entries = [...xml.matchAll(/<entry>([\s\S]*?)<\/entry>/g)];
 
-    const videos = entries.slice(0, 20).map(([, entry]) => {
+    const videos = entries.slice(0, 10).map(([, entry]) => {
       const id        = entry.match(/<yt:videoId>(.*?)<\/yt:videoId>/)?.[1]       ?? "";
       const rawTitle  = entry.match(/<title>(.*?)<\/title>/)?.[1]                 ?? "";
       const published = entry.match(/<published>(.*?)<\/published>/)?.[1]         ?? "";
