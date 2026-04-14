@@ -153,7 +153,7 @@ function ShortsSection({ channelId }) {
               <MoreButton expanded={expanded} count={videos.length - 1} onClick={() => setExpanded(e => !e)} />
             )}
             <div style={{ textAlign: "center", marginTop: 24 }}>
-              <a href="https://youtube.com/@toddponsky/shorts" target="_blank" rel="noopener noreferrer"
+              <a href="https://youtube.com/@tponsky/shorts" target="_blank" rel="noopener noreferrer"
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 8, background: "#dc2626",
                   color: "#fff", textDecoration: "none", borderRadius: 10, padding: "12px 24px", fontWeight: 700, fontSize: 14
