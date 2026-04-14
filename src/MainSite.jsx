@@ -28,7 +28,7 @@ function ShortsSection({ channelId }) {
       <div style={{ maxWidth: 1120, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <span style={{ color: "#f87171", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>YouTube Shorts</span>
-          <h2 style={{ fontSize: 38, fontWeight: 800, color: "#fff", marginTop: 8, marginBottom: 12 }}>Quick AI Tips</h2>
+          <h2 style={{ fontSize: 38, fontWeight: 800, color: "#fff", marginTop: 8, marginBottom: 12 }}>Check Out Todd's YouTube Channel</h2>
           <p style={{ fontSize: 17, color: "#94a3b8", maxWidth: 520, margin: "0 auto" }}>
             Bite-sized AI insights — under 60 seconds each.
           </p>
@@ -55,38 +55,39 @@ function ShortsSection({ channelId }) {
 
         {!loading && !error && videos.length > 0 && (
           <>
-            {/* Horizontal scroll on small screens, wrap on large */}
-            <div style={{ display: "flex", gap: 16, overflowX: "auto", paddingBottom: 8,
-              flexWrap: "wrap", justifyContent: "center" }}>
+            {/* 5×2 grid on desktop, 2 cols on mobile */}
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16 }}
+              className="shorts-grid">
               {videos.map(video => (
                 <a key={video.id} href={video.shortsUrl} target="_blank" rel="noopener noreferrer"
-                  style={{ textDecoration: "none", flexShrink: 0, width: 160 }}>
-                  <div style={{ position: "relative", width: 160, height: 284, borderRadius: 14,
-                    overflow: "hidden", background: "#1e293b" }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; e.currentTarget.style.transition = "transform 0.2s"; }}
+                  style={{ textDecoration: "none" }}>
+                  <div style={{ position: "relative", width: "100%", aspectRatio: "9/16", borderRadius: 14,
+                    overflow: "hidden", background: "#1e293b", transition: "transform 0.2s" }}
+                    onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }}>
                     <img src={video.thumbnail} alt={video.title}
-                      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center" }} />
-                    {/* Play overlay */}
-                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.7) 40%, transparent 70%)" }} />
+                      style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+                    {/* Gradient overlay */}
+                    <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.75) 40%, transparent 70%)" }} />
+                    {/* Play button */}
                     <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
                       width: 44, height: 44, background: "rgba(220,38,38,0.9)", borderRadius: "50%",
                       display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <Play size={18} color="#fff" fill="#fff" style={{ marginLeft: 3 }} />
                     </div>
-                    {/* Title */}
+                    {/* Title + views */}
                     <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px 10px 12px" }}>
                       <p style={{ color: "#fff", fontSize: 12, fontWeight: 600, lineHeight: 1.4,
                         display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", margin: 0 }}>
                         {video.title}
                       </p>
                       {video.views > 0 && (
-                        <p style={{ color: "#94a3b8", fontSize: 10, marginTop: 4, margin: "4px 0 0" }}>
+                        <p style={{ color: "#94a3b8", fontSize: 10, margin: "4px 0 0" }}>
                           {video.views.toLocaleString()} views
                         </p>
                       )}
                     </div>
-                    {/* Shorts badge */}
+                    {/* SHORT badge */}
                     <div style={{ position: "absolute", top: 8, right: 8, background: "#dc2626",
                       color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4, letterSpacing: "0.05em" }}>
                       SHORT
