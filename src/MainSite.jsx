@@ -33,7 +33,7 @@ function MoreButtonDark({ expanded, count, onClick }) {
       <button onClick={onClick}
         style={{
           display: "inline-flex", alignItems: "center", gap: 6, background: "#2563eb",
-          color: "#0f172a", border: "none", borderRadius: 10,
+          color: "#fff", border: "none", borderRadius: 10,
           padding: "10px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer"
         }}>
         {expanded ? <><ChevronUp size={15} /> Show Less</> : <><ChevronDown size={15} /> {count} More</>}
