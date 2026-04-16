@@ -192,7 +192,22 @@ export default function MainSite({ content, onAdminClick }) {
   const [toolsExpanded, setToolsExpanded] = useState(false);
   const [learnExpanded, setLearnExpanded] = useState(false);
   const [servicesExpanded, setServicesExpanded] = useState(false);
+  const [ytPlaylistVideos, setYtPlaylistVideos] = useState({}); // { [playlistId]: video[] }
+  const [ytPlaylistLoading, setYtPlaylistLoading] = useState(false);
   const isMobile = useIsMobile();
+
+  // Auto-fetch videos from YouTube when active playlist has a ytPlaylistId
+  useEffect(() => {
+    const pl = content.playlists.find(p => p.id === activePlaylist);
+    if (!pl?.ytPlaylistId) return;
+    if (ytPlaylistVideos[activePlaylist]) return; // already fetched
+    setYtPlaylistLoading(true);
+    fetch(`/api/playlist?playlistId=${encodeURIComponent(pl.ytPlaylistId)}`)
+      .then(r => r.json())
+      .then(data => setYtPlaylistVideos(prev => ({ ...prev, [activePlaylist]: data.videos || [] })))
+      .catch(() => setYtPlaylistVideos(prev => ({ ...prev, [activePlaylist]: [] })))
+      .finally(() => setYtPlaylistLoading(false));
+  }, [activePlaylist, content.playlists]);
 
   // Build nav from section order + visibility + custom pages
   const visibleSections = (content.sectionOrder || []).filter(id => content.sectionVisibility?.[id] !== false);
@@ -457,38 +472,55 @@ export default function MainSite({ content, onAdminClick }) {
               </button>
             ))}
           </div>
-          {currentPlaylist && (
-            <>
-              <p style={{ textAlign: "center", color: "#4b6280", fontSize: 15, marginBottom: 28 }}>{currentPlaylist.description}</p>
-              <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
-                {(!learnExpanded ? currentPlaylist.videos.slice(0, isMobile ? 1 : 3) : currentPlaylist.videos).map((video, idx) => (
-                  <div key={idx} style={{ background: "#ffffff", borderRadius: 14, overflow: "hidden", cursor: "pointer", border: "1.5px solid #c8dcea", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "#d8edf8"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; }}>
-                    <div style={{ position: "relative", background: "#0a0f1a", aspectRatio: "16/9", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      {video.ytId && video.ytId !== "REPLACE_ME" ? (
-                        <img src={`https://img.youtube.com/vi/${video.ytId}/mqdefault.jpg`} alt={video.title}
-                          style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} />
-                      ) : null}
-                      <div style={{ position: "relative", zIndex: 1, width: 52, height: 52, background: "#dc2626", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <Play size={22} color="#fff" fill="#fff" style={{ marginLeft: 3 }} />
-                      </div>
-                      <span style={{ position: "absolute", bottom: 8, right: 8, background: "rgba(0,0,0,0.8)", color: "#fff", fontSize: 11, padding: "2px 6px", borderRadius: 4, zIndex: 1 }}>{video.duration}</span>
-                      <span style={{ position: "absolute", top: 8, left: 8, background: "rgba(37,99,235,0.85)", color: "#fff", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 4, zIndex: 1 }}>EP {idx + 1}</span>
-                    </div>
-                    <div style={{ padding: 16 }}>
-                      <div style={{ fontSize: 11, color: "#4b6280", marginBottom: 4 }}>{currentPlaylist.title}</div>
-                      <div style={{ fontWeight: 600, color: "#1e293b", fontSize: 14, lineHeight: 1.4 }}>{video.title}</div>
-                    </div>
+          {currentPlaylist && (() => {
+            // Use YouTube-fetched videos if available, else fall back to manual list
+            const activeVideos = ytPlaylistVideos[currentPlaylist.id] ?? currentPlaylist.videos ?? [];
+            const shownVideos = learnExpanded ? activeVideos : activeVideos.slice(0, isMobile ? 1 : 3);
+            return (
+              <>
+                <p style={{ textAlign: "center", color: "#4b6280", fontSize: 15, marginBottom: 28 }}>{currentPlaylist.description}</p>
+                {ytPlaylistLoading && (
+                  <div style={{ textAlign: "center", padding: "32px 0", color: "#4b6280", fontSize: 14 }}>
+                    Loading playlist…
                   </div>
-                ))}
-              </div>
-              {currentPlaylist.videos.length > (isMobile ? 1 : 3) && (
-                <MoreButton expanded={learnExpanded} count={currentPlaylist.videos.length - (isMobile ? 1 : 3)} onClick={() => setLearnExpanded(e => !e)} />
-              )}
-
-            </>
-          )}
+                )}
+                {!ytPlaylistLoading && (
+                  <>
+                    <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
+                      {shownVideos.map((video, idx) => (
+                        <a key={idx}
+                          href={video.ytId ? `https://www.youtube.com/watch?v=${video.ytId}` : "#"}
+                          target="_blank" rel="noopener noreferrer" style={{ textDecoration: "none" }}>
+                          <div style={{ background: "#ffffff", borderRadius: 14, overflow: "hidden", cursor: "pointer", border: "1.5px solid #c8dcea", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}
+                            onMouseEnter={(e) => { e.currentTarget.style.background = "#d8edf8"; }}
+                            onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; }}>
+                            <div style={{ position: "relative", background: "#0a0f1a", aspectRatio: "16/9", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              {video.ytId ? (
+                                <img src={`https://img.youtube.com/vi/${video.ytId}/mqdefault.jpg`} alt={video.title}
+                                  style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} />
+                              ) : null}
+                              <div style={{ position: "relative", zIndex: 1, width: 52, height: 52, background: "#dc2626", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                <Play size={22} color="#fff" fill="#fff" style={{ marginLeft: 3 }} />
+                              </div>
+                              {video.duration && <span style={{ position: "absolute", bottom: 8, right: 8, background: "rgba(0,0,0,0.8)", color: "#fff", fontSize: 11, padding: "2px 6px", borderRadius: 4, zIndex: 1 }}>{video.duration}</span>}
+                              <span style={{ position: "absolute", top: 8, left: 8, background: "rgba(37,99,235,0.85)", color: "#fff", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 4, zIndex: 1 }}>EP {idx + 1}</span>
+                            </div>
+                            <div style={{ padding: 16 }}>
+                              <div style={{ fontSize: 11, color: "#4b6280", marginBottom: 4 }}>{currentPlaylist.title}</div>
+                              <div style={{ fontWeight: 600, color: "#1e293b", fontSize: 14, lineHeight: 1.4 }}>{video.title}</div>
+                            </div>
+                          </div>
+                        </a>
+                      ))}
+                    </div>
+                    {activeVideos.length > (isMobile ? 1 : 3) && (
+                      <MoreButton expanded={learnExpanded} count={activeVideos.length - (isMobile ? 1 : 3)} onClick={() => setLearnExpanded(e => !e)} />
+                    )}
+                  </>
+                )}
+              </>
+            );
+          })()}
         </div>
       </section>}
 
