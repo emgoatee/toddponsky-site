@@ -68,12 +68,12 @@ function ShortsSection({ channelId }) {
   }, [channelId]);
 
   return (
-    <section id="shorts" style={{ padding: "96px 24px", background: "#160d30" }}>
+    <section id="shorts" style={{ padding: "96px 24px", background: "#f1f6fb" }}>
       <div style={{ maxWidth: 1120, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
-          <span style={{ color: "#f87171", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>YouTube Shorts</span>
-          <h2 style={{ fontSize: 38, fontWeight: 800, color: "#fff", marginTop: 8, marginBottom: 12 }}>Check Out Todd's YouTube Channel</h2>
-          <p style={{ fontSize: 17, color: "#94a3b8", maxWidth: 520, margin: "0 auto" }}>
+          <span style={{ color: "#dc2626", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>YouTube Shorts</span>
+          <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>Check Out Todd's YouTube Channel</h2>
+          <p style={{ fontSize: 17, color: "#4b6280", maxWidth: 520, margin: "0 auto" }}>
             Bite-sized AI insights — under 60 seconds each.
           </p>
         </div>
@@ -83,17 +83,17 @@ function ShortsSection({ channelId }) {
             <div style={{ display: "inline-flex", gap: 8 }}>
               {[0, 1, 2].map(i => (
                 <div key={i} style={{
-                  width: 160, height: 284, background: "#1e293b", borderRadius: 14,
+                  width: 160, height: 284, background: "#c8dcea", borderRadius: 14,
                   animation: `pulse 1.5s ease-in-out ${i * 0.2}s infinite alternate`
                 }} />
               ))}
             </div>
-            <p style={{ color: "#475569", marginTop: 16, fontSize: 14 }}>Loading shorts…</p>
+            <p style={{ color: "#4b6280", marginTop: 16, fontSize: 14 }}>Loading shorts…</p>
           </div>
         )}
 
         {error && (
-          <div style={{ textAlign: "center", padding: "48px 0", color: "#f87171" }}>
+          <div style={{ textAlign: "center", padding: "48px 0", color: "#dc2626" }}>
             <p style={{ fontSize: 15 }}>⚠ Couldn't load shorts: {error}</p>
             <p style={{ fontSize: 13, color: "#475569", marginTop: 8 }}>Make sure YOUTUBE_CHANNEL_ID is set in Vercel environment variables.</p>
           </div>
@@ -362,7 +362,7 @@ export default function MainSite({ content, onAdminClick }) {
       </section>
 
       {/* ── ABOUT ── */}
-      {isVisible("about") && <section id="about" style={{ padding: "96px 24px", background: "#ffffff" }}>
+      {isVisible("about") && <section id="about" style={{ padding: "96px 24px", background: "#d8e7f3" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 64, alignItems: "center" }}>
             <div style={{ flex: "1 1 420px" }}>
@@ -390,7 +390,7 @@ export default function MainSite({ content, onAdminClick }) {
       </section>}
 
       {/* ── AI TOOLS ── */}
-      {isVisible("tools") && <section id="tools" style={{ padding: "96px 24px", background: "#f1f5f9" }}>
+      {isVisible("tools") && <section id="tools" style={{ padding: "96px 24px", background: "#e2edf7" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Curated Resources</span>
@@ -407,7 +407,7 @@ export default function MainSite({ content, onAdminClick }) {
           <div style={{ display: "flex", flexWrap: "wrap", gap: 8, justifyContent: "center", marginBottom: 36 }}>
             {ALL_CATEGORIES.map((cat) => (
               <button key={cat} onClick={() => setActiveCategory(cat)}
-                style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", border: "none", background: activeCategory === cat ? "#2563eb" : "#f1f5f9", color: activeCategory === cat ? "#fff" : "#475569" }}>
+                style={{ padding: "8px 16px", borderRadius: 8, fontSize: 13, fontWeight: 600, cursor: "pointer", border: "none", background: activeCategory === cat ? "#2563eb" : "#d0e3f0", color: activeCategory === cat ? "#fff" : "#334155" }}>
                 {cat}
               </button>
             ))}
@@ -415,7 +415,7 @@ export default function MainSite({ content, onAdminClick }) {
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
             {(!toolsExpanded ? filteredTools.slice(0, isMobile ? 1 : 3) : filteredTools).map((tool) => (
               <a key={tool.name} href={tool.url} target="_blank" rel="noopener noreferrer"
-                style={{ background: "#f8fafc", border: "1.5px solid #e2e8f0", borderRadius: 14, padding: 20, textDecoration: "none", display: "block" }}
+                style={{ background: "#ffffff", border: "1.5px solid #c8dcea", borderRadius: 14, padding: 20, textDecoration: "none", display: "block" }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#93c5fd"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(37,99,235,0.1)"; }}
                 onMouseLeave={(e) => { e.currentTarget.style.borderColor = "#e2e8f0"; e.currentTarget.style.boxShadow = "none"; }}>
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 10 }}>
@@ -440,31 +440,31 @@ export default function MainSite({ content, onAdminClick }) {
       </section>}
 
       {/* ── LEARN ── */}
-      {isVisible("learn") && <section id="learn" style={{ padding: "96px 24px", background: "#111827" }}>
+      {isVisible("learn") && <section id="learn" style={{ padding: "96px 24px", background: "#eaf3fa" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <span style={{ color: "#60a5fa", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Free Education</span>
-            <h2 style={{ fontSize: 38, fontWeight: 800, color: "#fff", marginTop: 8, marginBottom: 12 }}>AI for Everyone</h2>
-            <p style={{ fontSize: 17, color: "#94a3b8", maxWidth: 520, margin: "0 auto" }}>
+            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Free Education</span>
+            <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>AI for Everyone</h2>
+            <p style={{ fontSize: 17, color: "#4b6280", maxWidth: 520, margin: "0 auto" }}>
               Structured playlists to take you from AI-curious to AI-confident — at your own pace.
             </p>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginBottom: 36 }}>
             {content.playlists.map((pl) => (
               <button key={pl.id} onClick={() => setActivePlaylist(pl.id)}
-                style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 20px", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer", border: "none", background: activePlaylist === pl.id ? "#2563eb" : "#1e293b", color: activePlaylist === pl.id ? "#fff" : "#94a3b8" }}>
+                style={{ display: "flex", alignItems: "center", gap: 8, padding: "10px 20px", borderRadius: 10, fontSize: 14, fontWeight: 600, cursor: "pointer", border: "1.5px solid #c8dcea", background: activePlaylist === pl.id ? "#2563eb" : "#daeaf5", color: activePlaylist === pl.id ? "#fff" : "#334155" }}>
                 {pl.icon} {pl.title}
               </button>
             ))}
           </div>
           {currentPlaylist && (
             <>
-              <p style={{ textAlign: "center", color: "#64748b", fontSize: 15, marginBottom: 28 }}>{currentPlaylist.description}</p>
+              <p style={{ textAlign: "center", color: "#4b6280", fontSize: 15, marginBottom: 28 }}>{currentPlaylist.description}</p>
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
                 {(!learnExpanded ? currentPlaylist.videos.slice(0, isMobile ? 1 : 3) : currentPlaylist.videos).map((video, idx) => (
-                  <div key={idx} style={{ background: "#1f2937", borderRadius: 14, overflow: "hidden", cursor: "pointer" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "#273549"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "#1f2937"; }}>
+                  <div key={idx} style={{ background: "#ffffff", borderRadius: 14, overflow: "hidden", cursor: "pointer", border: "1.5px solid #c8dcea", boxShadow: "0 1px 4px rgba(0,0,0,0.06)" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "#d8edf8"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; }}>
                     <div style={{ position: "relative", background: "#0a0f1a", aspectRatio: "16/9", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {video.ytId && video.ytId !== "REPLACE_ME" ? (
                         <img src={`https://img.youtube.com/vi/${video.ytId}/mqdefault.jpg`} alt={video.title}
@@ -477,8 +477,8 @@ export default function MainSite({ content, onAdminClick }) {
                       <span style={{ position: "absolute", top: 8, left: 8, background: "rgba(37,99,235,0.85)", color: "#fff", fontSize: 10, fontWeight: 700, padding: "2px 8px", borderRadius: 4, zIndex: 1 }}>EP {idx + 1}</span>
                     </div>
                     <div style={{ padding: 16 }}>
-                      <div style={{ fontSize: 11, color: "#475569", marginBottom: 4 }}>{currentPlaylist.title}</div>
-                      <div style={{ fontWeight: 600, color: "#f1f5f9", fontSize: 14, lineHeight: 1.4 }}>{video.title}</div>
+                      <div style={{ fontSize: 11, color: "#4b6280", marginBottom: 4 }}>{currentPlaylist.title}</div>
+                      <div style={{ fontWeight: 600, color: "#1e293b", fontSize: 14, lineHeight: 1.4 }}>{video.title}</div>
                     </div>
                   </div>
                 ))}
@@ -496,7 +496,7 @@ export default function MainSite({ content, onAdminClick }) {
       {isVisible("shorts") && <ShortsSection channelId={content.youtubeChannelId} />}
 
       {/* ── SERVICES ── */}
-      {isVisible("services") && <section id="services" style={{ padding: "96px 24px", background: "#eff6ff" }}>
+      {isVisible("services") && <section id="services" style={{ padding: "96px 24px", background: "#f6fafd" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Work Together</span>
@@ -536,7 +536,7 @@ export default function MainSite({ content, onAdminClick }) {
       </section>}
 
       {/* ── CONTACT ── */}
-      {isVisible("contact") && <section id="contact" style={{ padding: "96px 24px", background: "#f1f5f9" }}>
+      {isVisible("contact") && <section id="contact" style={{ padding: "96px 24px", background: "#ffffff" }}>
         <div style={{ maxWidth: 640, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 40 }}>
             <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Get in Touch</span>
