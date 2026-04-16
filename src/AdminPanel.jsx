@@ -96,6 +96,14 @@ function HeroEditor({ data, onChange }) {
           </div>
         )}
       </Field>
+      <Field label="Stats bar">
+        <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontSize: 14 }}>
+          <input type="checkbox" checked={data.showStats !== false}
+            onChange={e => set("showStats", e.target.checked)}
+            style={{ width: 16, height: 16 }} />
+          Show stats bar on hero (500+ clients, etc.)
+        </label>
+      </Field>
       <Field label="Stats (number + label)">
         {data.stats.map((s, i) => (
           <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
@@ -215,6 +223,13 @@ function PlaylistsEditor({ playlists, onChange }) {
   const removeVideo = (pi, vi) => {
     const u = [...playlists]; u[pi].videos = u[pi].videos.filter((_, i) => i !== vi); onChange(u);
   };
+  const moveVideo = (pi, vi, dir) => {
+    const u = [...playlists]; const videos = [...u[pi].videos];
+    const swapWith = vi + dir;
+    if (swapWith < 0 || swapWith >= videos.length) return;
+    [videos[vi], videos[swapWith]] = [videos[swapWith], videos[vi]];
+    u[pi] = { ...u[pi], videos }; onChange(u);
+  };
 
   return (
     <>
@@ -245,7 +260,16 @@ function PlaylistsEditor({ playlists, onChange }) {
             Videos ({pl.videos.length})
           </div>
           {pl.videos.map((v, vi) => (
-            <div key={vi} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center" }}>
+            <div key={vi} style={{ display: "flex", gap: 6, marginBottom: 8, alignItems: "center" }}>
+              {/* Reorder arrows */}
+              <div style={{ display: "flex", flexDirection: "column", gap: 2, flexShrink: 0 }}>
+                <Btn variant="ghost" small onClick={() => moveVideo(pi, vi, -1)} disabled={vi === 0} style={{ padding: "2px 5px" }}>
+                  <ChevronUp size={12} />
+                </Btn>
+                <Btn variant="ghost" small onClick={() => moveVideo(pi, vi, 1)} disabled={vi === pl.videos.length - 1} style={{ padding: "2px 5px" }}>
+                  <ChevronDown size={12} />
+                </Btn>
+              </div>
               <input style={{ ...inputStyle, width: 115 }} value={v.ytId} placeholder="YouTube ID" onChange={e => updateVideo(pi, vi, "ytId", e.target.value)} />
               <input style={{ ...inputStyle, flex: 3 }} value={v.title} placeholder="Title" onChange={e => updateVideo(pi, vi, "title", e.target.value)} />
               <input style={{ ...inputStyle, width: 68 }} value={v.duration} placeholder="0:00" onChange={e => updateVideo(pi, vi, "duration", e.target.value)} />
