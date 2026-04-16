@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { Search, Youtube, ExternalLink, ChevronRight, Play, Menu, X, Settings, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import { useState, useEffect, useRef } from "react";
+import { Search, Youtube, ExternalLink, ChevronRight, Play, Menu, X, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
 
 // ─── Mobile helpers ───────────────────────────────────────────────────────────
 function useIsMobile() {
@@ -18,7 +18,7 @@ function MoreButton({ expanded, count, onClick }) {
       <button onClick={onClick}
         style={{
           display: "inline-flex", alignItems: "center", gap: 6, background: "#2563eb",
-          color: "#e2e8f0", border: "1.5px solid rgba(255,255,255,0.15)", borderRadius: 10,
+          color: "#fff", border: "none", borderRadius: 10,
           padding: "10px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer"
         }}>
         {expanded ? <><ChevronUp size={15} /> Show Less</> : <><ChevronDown size={15} /> {count} More</>}
@@ -72,7 +72,7 @@ function ShortsSection({ channelId }) {
       <div style={{ maxWidth: 1120, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <span style={{ color: "#dc2626", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>YouTube Shorts</span>
-          <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>Todd's Social Media</h2>
+          <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>Check Out Todd's YouTube Channel</h2>
           <p style={{ fontSize: 17, color: "#4b6280", maxWidth: 520, margin: "0 auto" }}>
             Bite-sized AI insights — under 60 seconds each.
           </p>
@@ -153,7 +153,7 @@ function ShortsSection({ channelId }) {
               <MoreButton expanded={expanded} count={videos.length - 1} onClick={() => setExpanded(e => !e)} />
             )}
             <div style={{ textAlign: "center", marginTop: 24 }}>
-              <a href="https://youtube.com/@toddponsky/shorts" target="_blank" rel="noopener noreferrer"
+              <a href="https://youtube.com/@tponsky/shorts" target="_blank" rel="noopener noreferrer"
                 style={{
                   display: "inline-flex", alignItems: "center", gap: 8, background: "#dc2626",
                   color: "#fff", textDecoration: "none", borderRadius: 10, padding: "12px 24px", fontWeight: 700, fontSize: 14
@@ -195,6 +195,22 @@ export default function MainSite({ content, onAdminClick }) {
   const [ytPlaylistVideos, setYtPlaylistVideos] = useState({}); // { [playlistId]: video[] }
   const [ytPlaylistLoading, setYtPlaylistLoading] = useState(false);
   const isMobile = useIsMobile();
+
+  // Secret admin access: click logo 5 times within 3 seconds
+  const logoClickCount = useRef(0);
+  const logoClickTimer = useRef(null);
+  const handleLogoClick = () => {
+    setActivePage(null);
+    scrollTo("hero");
+    logoClickCount.current += 1;
+    clearTimeout(logoClickTimer.current);
+    if (logoClickCount.current >= 5) {
+      logoClickCount.current = 0;
+      onAdminClick();
+      return;
+    }
+    logoClickTimer.current = setTimeout(() => { logoClickCount.current = 0; }, 3000);
+  };
 
   // Auto-fetch videos from YouTube when active playlist has a ytPlaylistId
   useEffect(() => {
@@ -284,7 +300,7 @@ export default function MainSite({ content, onAdminClick }) {
       {/* ── NAV ── */}
       <nav style={{ position: "fixed", top: 0, left: 0, right: 0, zIndex: 50, background: "rgba(255,255,255,0.97)", backdropFilter: "blur(8px)", borderBottom: "1px solid #e2e8f0" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto", padding: "0 24px", height: 64, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <button onClick={() => { setActivePage(null); scrollTo("hero"); }} style={{ fontWeight: 800, fontSize: 20, color: "#0f172a", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={handleLogoClick} style={{ fontWeight: 800, fontSize: 20, color: "#0f172a", background: "none", border: "none", cursor: "pointer" }}>
             Todd Ponsky
           </button>
           <div className="desktop-nav" style={{ display: "flex", alignItems: "center", gap: 28 }}>
@@ -297,10 +313,6 @@ export default function MainSite({ content, onAdminClick }) {
             <button onClick={() => handleNavClick({ id: "contact", type: "section" })}
               style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, padding: "8px 18px", fontSize: 14, fontWeight: 600, cursor: "pointer" }}>
               Work With Us
-            </button>
-            <button onClick={onAdminClick} title="Admin"
-              style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8", padding: 4 }}>
-              <Settings size={18} />
             </button>
           </div>
           <button className="mobile-toggle" onClick={() => setMobileOpen(!mobileOpen)}
@@ -315,9 +327,6 @@ export default function MainSite({ content, onAdminClick }) {
                 {l.label}
               </button>
             ))}
-            <button onClick={onAdminClick} style={{ background: "none", border: "none", cursor: "pointer", textAlign: "left", fontSize: 13, color: "#94a3b8" }}>
-              ⚙ Admin
-            </button>
           </div>
         )}
       </nav>
@@ -408,7 +417,7 @@ export default function MainSite({ content, onAdminClick }) {
       {isVisible("tools") && <section id="tools" style={{ padding: "96px 24px", background: "#e2edf7" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Todd's Favorites</span>
+            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Curated Resources</span>
             <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>AI Tools Directory</h2>
             <p style={{ fontSize: 17, color: "#64748b", maxWidth: 520, margin: "0 auto" }}>
               A hand-picked collection of the AI tools worth knowing — vetted, categorized, and updated regularly.
@@ -458,7 +467,7 @@ export default function MainSite({ content, onAdminClick }) {
       {isVisible("learn") && <section id="learn" style={{ padding: "96px 24px", background: "#eaf3fa" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Curated Resources</span>
+            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Free Education</span>
             <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>AI for Everyone</h2>
             <p style={{ fontSize: 17, color: "#4b6280", maxWidth: 520, margin: "0 auto" }}>
               Structured playlists to take you from AI-curious to AI-confident — at your own pace.
@@ -496,7 +505,16 @@ export default function MainSite({ content, onAdminClick }) {
                             onMouseLeave={(e) => { e.currentTarget.style.background = "#ffffff"; }}>
                             <div style={{ position: "relative", background: "#0a0f1a", aspectRatio: "16/9", display: "flex", alignItems: "center", justifyContent: "center" }}>
                               {video.ytId ? (
-                                <img src={`https://img.youtube.com/vi/${video.ytId}/mqdefault.jpg`} alt={video.title}
+                                <img
+                                  src={`https://img.youtube.com/vi/${video.ytId}/hqdefault.jpg`}
+                                  alt={video.title}
+                                  onError={(e) => {
+                                    const fallbacks = ["mqdefault.jpg", "sddefault.jpg", "default.jpg"];
+                                    const current = e.target.src.split("/").pop();
+                                    const next = fallbacks[fallbacks.indexOf(current)];
+                                    if (next) e.target.src = `https://img.youtube.com/vi/${video.ytId}/${next}`;
+                                    else e.target.style.display = "none";
+                                  }}
                                   style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} />
                               ) : null}
                               <div style={{ position: "relative", zIndex: 1, width: 52, height: 52, background: "#dc2626", borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center" }}>
