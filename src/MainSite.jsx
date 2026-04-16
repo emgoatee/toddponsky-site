@@ -17,7 +17,7 @@ function MoreButton({ expanded, count, onClick }) {
     <div style={{ textAlign: "center", marginTop: 20 }}>
       <button onClick={onClick}
         style={{
-          display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.08)",
+          display: "inline-flex", alignItems: "center", gap: 6, background: "#2563eb",
           color: "#e2e8f0", border: "1.5px solid rgba(255,255,255,0.15)", borderRadius: 10,
           padding: "10px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer"
         }}>
@@ -32,7 +32,7 @@ function MoreButtonDark({ expanded, count, onClick }) {
     <div style={{ textAlign: "center", marginTop: 20 }}>
       <button onClick={onClick}
         style={{
-          display: "inline-flex", alignItems: "center", gap: 6, background: "#f1f5f9",
+          display: "inline-flex", alignItems: "center", gap: 6, background: "#2563eb",
           color: "#0f172a", border: "none", borderRadius: 10,
           padding: "10px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer"
         }}>
