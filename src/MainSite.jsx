@@ -408,7 +408,7 @@ export default function MainSite({ content, onAdminClick }) {
       {isVisible("tools") && <section id="tools" style={{ padding: "96px 24px", background: "#e2edf7" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Curated Resources</span>
+            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Todd's Favorites</span>
             <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>AI Tools Directory</h2>
             <p style={{ fontSize: 17, color: "#64748b", maxWidth: 520, margin: "0 auto" }}>
               A hand-picked collection of the AI tools worth knowing — vetted, categorized, and updated regularly.
@@ -458,7 +458,7 @@ export default function MainSite({ content, onAdminClick }) {
       {isVisible("learn") && <section id="learn" style={{ padding: "96px 24px", background: "#eaf3fa" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Free Education</span>
+            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Curated Resources</span>
             <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>AI for Everyone</h2>
             <p style={{ fontSize: 17, color: "#4b6280", maxWidth: 520, margin: "0 auto" }}>
               Structured playlists to take you from AI-curious to AI-confident — at your own pace.
