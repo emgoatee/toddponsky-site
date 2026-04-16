@@ -16,11 +16,9 @@ function MoreButton({ expanded, count, onClick }) {
   return (
     <div style={{ textAlign: "center", marginTop: 20 }}>
       <button onClick={onClick}
-        style={{
-          display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.08)",
+        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "rgba(255,255,255,0.08)",
           color: "#e2e8f0", border: "1.5px solid rgba(255,255,255,0.15)", borderRadius: 10,
-          padding: "10px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer"
-        }}>
+          padding: "10px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
         {expanded ? <><ChevronUp size={15} /> Show Less</> : <><ChevronDown size={15} /> {count} More</>}
       </button>
     </div>
@@ -31,11 +29,9 @@ function MoreButtonDark({ expanded, count, onClick }) {
   return (
     <div style={{ textAlign: "center", marginTop: 20 }}>
       <button onClick={onClick}
-        style={{
-          display: "inline-flex", alignItems: "center", gap: 6, background: "#f1f5f9",
+        style={{ display: "inline-flex", alignItems: "center", gap: 6, background: "#f1f5f9",
           color: "#0f172a", border: "none", borderRadius: 10,
-          padding: "10px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer"
-        }}>
+          padding: "10px 22px", fontSize: 14, fontWeight: 700, cursor: "pointer" }}>
         {expanded ? <><ChevronUp size={15} /> Show Less</> : <><ChevronDown size={15} /> {count} More</>}
       </button>
     </div>
@@ -68,7 +64,7 @@ function ShortsSection({ channelId }) {
   }, [channelId]);
 
   return (
-    <section id="shorts" style={{ padding: "96px 24px", background: "#0f172a" }}>
+    <section id="shorts" style={{ padding: "96px 24px", background: "#160d30" }}>
       <div style={{ maxWidth: 1120, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 48 }}>
           <span style={{ color: "#f87171", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>YouTube Shorts</span>
@@ -81,11 +77,9 @@ function ShortsSection({ channelId }) {
         {loading && (
           <div style={{ textAlign: "center", padding: "48px 0" }}>
             <div style={{ display: "inline-flex", gap: 8 }}>
-              {[0, 1, 2].map(i => (
-                <div key={i} style={{
-                  width: 160, height: 284, background: "#1e293b", borderRadius: 14,
-                  animation: `pulse 1.5s ease-in-out ${i * 0.2}s infinite alternate`
-                }} />
+              {[0,1,2].map(i => (
+                <div key={i} style={{ width: 160, height: 284, background: "#1e293b", borderRadius: 14,
+                  animation: `pulse 1.5s ease-in-out ${i * 0.2}s infinite alternate` }} />
               ))}
             </div>
             <p style={{ color: "#475569", marginTop: 16, fontSize: 14 }}>Loading shorts…</p>
@@ -95,7 +89,7 @@ function ShortsSection({ channelId }) {
         {error && (
           <div style={{ textAlign: "center", padding: "48px 0", color: "#f87171" }}>
             <p style={{ fontSize: 15 }}>⚠ Couldn't load shorts: {error}</p>
-            <p style={{ fontSize: 13, color: "#475569", marginTop: 8 }}>Add your YouTube Channel ID in Admin → Settings.</p>
+            <p style={{ fontSize: 13, color: "#475569", marginTop: 8 }}>Make sure YOUTUBE_CHANNEL_ID is set in Vercel environment variables.</p>
           </div>
         )}
 
@@ -106,10 +100,8 @@ function ShortsSection({ channelId }) {
               {visibleVideos.map(video => (
                 <a key={video.id} href={video.shortsUrl} target="_blank" rel="noopener noreferrer"
                   style={{ textDecoration: "none" }}>
-                  <div style={{
-                    position: "relative", width: "100%", aspectRatio: "9/16", borderRadius: 14,
-                    overflow: "hidden", background: "#1e293b", transition: "transform 0.2s"
-                  }}
+                  <div style={{ position: "relative", width: "100%", aspectRatio: "9/16", borderRadius: 14,
+                    overflow: "hidden", background: "#2d1454", transition: "transform 0.2s" }}
                     onMouseEnter={e => { e.currentTarget.style.transform = "scale(1.03)"; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = "scale(1)"; }}>
                     <img src={video.thumbnail} alt={video.title}
@@ -117,19 +109,15 @@ function ShortsSection({ channelId }) {
                     {/* Gradient overlay */}
                     <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(0,0,0,0.75) 40%, transparent 70%)" }} />
                     {/* Play button */}
-                    <div style={{
-                      position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
+                    <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)",
                       width: 44, height: 44, background: "rgba(220,38,38,0.9)", borderRadius: "50%",
-                      display: "flex", alignItems: "center", justifyContent: "center"
-                    }}>
+                      display: "flex", alignItems: "center", justifyContent: "center" }}>
                       <Play size={18} color="#fff" fill="#fff" style={{ marginLeft: 3 }} />
                     </div>
                     {/* Title + views */}
                     <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "10px 10px 12px" }}>
-                      <p style={{
-                        color: "#fff", fontSize: 12, fontWeight: 600, lineHeight: 1.4,
-                        display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", margin: 0
-                      }}>
+                      <p style={{ color: "#fff", fontSize: 12, fontWeight: 600, lineHeight: 1.4,
+                        display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", margin: 0 }}>
                         {video.title}
                       </p>
                       {video.views > 0 && (
@@ -139,10 +127,8 @@ function ShortsSection({ channelId }) {
                       )}
                     </div>
                     {/* SHORT badge */}
-                    <div style={{
-                      position: "absolute", top: 8, right: 8, background: "#dc2626",
-                      color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4, letterSpacing: "0.05em"
-                    }}>
+                    <div style={{ position: "absolute", top: 8, right: 8, background: "#dc2626",
+                      color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 6px", borderRadius: 4, letterSpacing: "0.05em" }}>
                       SHORT
                     </div>
                   </div>
@@ -153,11 +139,9 @@ function ShortsSection({ channelId }) {
               <MoreButton expanded={expanded} count={videos.length - 1} onClick={() => setExpanded(e => !e)} />
             )}
             <div style={{ textAlign: "center", marginTop: 24 }}>
-              <a href="https://youtube.com/@tponsky/shorts" target="_blank" rel="noopener noreferrer"
-                style={{
-                  display: "inline-flex", alignItems: "center", gap: 8, background: "#dc2626",
-                  color: "#fff", textDecoration: "none", borderRadius: 10, padding: "12px 24px", fontWeight: 700, fontSize: 14
-                }}>
+              <a href="https://youtube.com/@toddponsky/shorts" target="_blank" rel="noopener noreferrer"
+                style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#dc2626",
+                  color: "#fff", textDecoration: "none", borderRadius: 10, padding: "12px 24px", fontWeight: 700, fontSize: 14 }}>
                 <Youtube size={18} /> See All Shorts
               </a>
             </div>
@@ -171,12 +155,12 @@ function ShortsSection({ channelId }) {
 
 // Built-in section nav labels
 const SECTION_LABELS = {
-  about: "About",
-  tools: "AI Tools",
-  learn: "Learn",
-  shorts: "Shorts",
+  about:    "About",
+  tools:    "AI Tools",
+  learn:    "Learn",
+  shorts:   "Shorts",
   services: "Services",
-  contact: "Contact",
+  contact:  "Contact",
 };
 
 const ALL_CATEGORIES = ["All", "Writing & Content", "Image Generation", "Video", "Productivity", "Audio & Voice", "Analytics & Data"];
@@ -328,8 +312,8 @@ export default function MainSite({ content, onAdminClick }) {
                   {hero.ctaPrimary}
                 </button>
                 <button onClick={() => scrollTo("learn")}
-                  style={{ background: "transparent", color: "#fff", border: "1.5px solid rgba(255,255,255,0.3)", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer", display: "flex", alignItems: "center", gap: 8 }}>
-                  <Play size={16} fill="white" /> {hero.ctaSecondary}
+                  style={{ background: "transparent", color: "#fff", border: "1.5px solid rgba(255,255,255,0.3)", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                  {hero.ctaSecondary}
                 </button>
               </div>
               {hero.showStats !== false && (
@@ -372,7 +356,7 @@ export default function MainSite({ content, onAdminClick }) {
       </section>
 
       {/* ── ABOUT ── */}
-      {isVisible("about") && <section id="about" style={{ padding: "96px 24px", background: "#f8fafc" }}>
+      {isVisible("about") && <section id="about" style={{ padding: "96px 24px", background: "#ffffff" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 64, alignItems: "center" }}>
             <div style={{ flex: "1 1 420px" }}>
@@ -400,7 +384,7 @@ export default function MainSite({ content, onAdminClick }) {
       </section>}
 
       {/* ── AI TOOLS ── */}
-      {isVisible("tools") && <section id="tools" style={{ padding: "96px 24px", background: "#fff" }}>
+      {isVisible("tools") && <section id="tools" style={{ padding: "96px 24px", background: "#f1f5f9" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Curated Resources</span>
@@ -450,7 +434,7 @@ export default function MainSite({ content, onAdminClick }) {
       </section>}
 
       {/* ── LEARN ── */}
-      {isVisible("learn") && <section id="learn" style={{ padding: "96px 24px", background: "#0f172a" }}>
+      {isVisible("learn") && <section id="learn" style={{ padding: "96px 24px", background: "#111827" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span style={{ color: "#60a5fa", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Free Education</span>
@@ -472,10 +456,10 @@ export default function MainSite({ content, onAdminClick }) {
               <p style={{ textAlign: "center", color: "#64748b", fontSize: 15, marginBottom: 28 }}>{currentPlaylist.description}</p>
               <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(280px, 1fr))", gap: 20 }}>
                 {(!learnExpanded ? currentPlaylist.videos.slice(0, isMobile ? 1 : 3) : currentPlaylist.videos).map((video, idx) => (
-                  <div key={idx} style={{ background: "#1e293b", borderRadius: 14, overflow: "hidden", cursor: "pointer" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.background = "#243044"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = "#1e293b"; }}>
-                    <div style={{ position: "relative", background: "#0f172a", aspectRatio: "16/9", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                  <div key={idx} style={{ background: "#1f2937", borderRadius: 14, overflow: "hidden", cursor: "pointer" }}
+                    onMouseEnter={(e) => { e.currentTarget.style.background = "#273549"; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.background = "#1f2937"; }}>
+                    <div style={{ position: "relative", background: "#0a0f1a", aspectRatio: "16/9", display: "flex", alignItems: "center", justifyContent: "center" }}>
                       {video.ytId && video.ytId !== "REPLACE_ME" ? (
                         <img src={`https://img.youtube.com/vi/${video.ytId}/mqdefault.jpg`} alt={video.title}
                           style={{ width: "100%", height: "100%", objectFit: "cover", position: "absolute", inset: 0 }} />
@@ -496,12 +480,7 @@ export default function MainSite({ content, onAdminClick }) {
               {currentPlaylist.videos.length > (isMobile ? 1 : 3) && (
                 <MoreButton expanded={learnExpanded} count={currentPlaylist.videos.length - (isMobile ? 1 : 3)} onClick={() => setLearnExpanded(e => !e)} />
               )}
-              <div style={{ textAlign: "center", marginTop: 40 }}>
-                <a href={youtubeChannelUrl} target="_blank" rel="noopener noreferrer"
-                  style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "#dc2626", color: "#fff", textDecoration: "none", borderRadius: 10, padding: "14px 28px", fontWeight: 700, fontSize: 15 }}>
-                  <Youtube size={20} /> View Full Channel on YouTube
-                </a>
-              </div>
+
             </>
           )}
         </div>
@@ -511,7 +490,7 @@ export default function MainSite({ content, onAdminClick }) {
       {isVisible("shorts") && <ShortsSection channelId={content.youtubeChannelId} />}
 
       {/* ── SERVICES ── */}
-      {isVisible("services") && <section id="services" style={{ padding: "96px 24px", background: "#fff" }}>
+      {isVisible("services") && <section id="services" style={{ padding: "96px 24px", background: "#eff6ff" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
             <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Work Together</span>
@@ -551,7 +530,7 @@ export default function MainSite({ content, onAdminClick }) {
       </section>}
 
       {/* ── CONTACT ── */}
-      {isVisible("contact") && <section id="contact" style={{ padding: "96px 24px", background: "#f8fafc" }}>
+      {isVisible("contact") && <section id="contact" style={{ padding: "96px 24px", background: "#f1f5f9" }}>
         <div style={{ maxWidth: 640, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 40 }}>
             <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Get in Touch</span>
