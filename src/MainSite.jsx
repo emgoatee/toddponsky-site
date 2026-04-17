@@ -139,7 +139,7 @@ function ShortsSection({ channelId }) {
               <MoreButton expanded={expanded} count={videos.length - 1} onClick={() => setExpanded(e => !e)} />
             )}
             <div style={{ textAlign: "center", marginTop: 24 }}>
-              <a href="https://youtube.com/@toddponsky/shorts" target="_blank" rel="noopener noreferrer"
+              <a href="https://www.youtube.com/@tponsky/shorts" target="_blank" rel="noopener noreferrer"
                 style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#dc2626",
                   color: "#fff", textDecoration: "none", borderRadius: 10, padding: "12px 24px", fontWeight: 700, fontSize: 14 }}>
                 <Youtube size={18} /> See All Shorts
@@ -335,14 +335,14 @@ export default function MainSite({ content, onAdminClick }) {
                   style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
                   {hero.ctaPrimary}
                 </button>
+                <a href="https://substack.com/@toddponsky" target="_blank" rel="noopener noreferrer"
+                  style={{ background: "#FF6719", color: "#fff", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer", textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+                  Subscribe to Newsletter
+                </a>
                 <button onClick={() => scrollTo("learn")}
                   style={{ background: "transparent", color: "#fff", border: "1.5px solid rgba(255,255,255,0.3)", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
                   {hero.ctaSecondary}
                 </button>
-                <a href="https://substack.com/@toddponsky" target="_blank" rel="noopener noreferrer"
-                  style={{ background: "#FF6719", color: "#fff", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer", textDecoration: "none", display: "inline-flex", alignItems: "center", gap: 8 }}>
-                  ✉ Subscribe to Newsletter
-                </a>
               </div>
             </div>
             {!isMobile && <div style={{ flex: "0 0 auto" }}>
