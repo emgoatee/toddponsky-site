@@ -332,60 +332,102 @@ export default function MainSite({ content, onAdminClick }) {
       </nav>
 
       {/* ── HERO ── */}
-      <section id="hero" style={{ paddingTop: 64, minHeight: "100vh", display: "flex", alignItems: "center", background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%)" }}>
-        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "80px 24px" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 48, alignItems: "center" }}>
-            <div style={{ flex: "1 1 480px", color: "#fff" }}>
-              <span style={{ display: "inline-block", background: "rgba(59,130,246,0.2)", color: "#93c5fd", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 999, marginBottom: 24 }}>
-                {hero.badge}
-              </span>
-              <h1 style={{ fontSize: "clamp(36px,5vw,58px)", fontWeight: 800, lineHeight: 1.1, marginBottom: 20, letterSpacing: "-1px" }}>
-                {hero.headline.replace(/\.$/, "")}
-                <br /><span style={{ color: "#60a5fa" }}>for Everyone.</span>
-              </h1>
-              <p style={{ fontSize: 18, color: "#94a3b8", lineHeight: 1.7, marginBottom: 32, maxWidth: 520 }}>
-                {hero.subheadline}
-              </p>
-              <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-                <button onClick={() => scrollTo("services")}
-                  style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
-                  {hero.ctaPrimary}
-                </button>
-                <a href="https://substack.com/@toddponsky" target="_blank" rel="noopener noreferrer"
-                  style={{ background: "#FF6719", color: "#fff", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer", textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
-                  Subscribe to Newsletter
-                </a>
-                <button onClick={() => scrollTo("learn")}
-                  style={{ background: "transparent", color: "#fff", border: "1.5px solid rgba(255,255,255,0.3)", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
-                  {hero.ctaSecondary}
-                </button>
-              </div>
+      <section id="hero" style={{ paddingTop: 64, background: "linear-gradient(135deg, #0f172a 0%, #1e3a5f 50%, #0f172a 100%)" }}>
+        <div style={{ maxWidth: 1120, margin: "0 auto", padding: "80px 24px 72px" }}>
+
+          {/* Headline + buttons */}
+          <div style={{ color: "#fff", maxWidth: 680, marginBottom: 52 }}>
+            <span style={{ display: "inline-block", background: "rgba(59,130,246,0.2)", color: "#93c5fd", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 999, marginBottom: 24 }}>
+              {hero.badge}
+            </span>
+            <h1 style={{ fontSize: "clamp(36px,5vw,58px)", fontWeight: 800, lineHeight: 1.1, marginBottom: 20, letterSpacing: "-1px" }}>
+              {hero.headline.replace(/\.$/, "")}
+              <br /><span style={{ color: "#60a5fa" }}>{hero.headlineAccent || "for Everyone."}</span>
+            </h1>
+            <p style={{ fontSize: 18, color: "#94a3b8", lineHeight: 1.7, marginBottom: 32, maxWidth: 520 }}>
+              {hero.subheadline}
+            </p>
+            <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
+              <button onClick={() => scrollTo("services")}
+                style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                {hero.ctaPrimary}
+              </button>
+              <a href={hero.step1Btn1Url || "https://substack.com/@toddponsky"} target="_blank" rel="noopener noreferrer"
+                style={{ background: "#FF6719", color: "#fff", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, textDecoration: "none", display: "inline-flex", alignItems: "center" }}>
+                {hero.newsletterLabel || "Subscribe to Newsletter"}
+              </a>
+              <button onClick={() => scrollTo("learn")}
+                style={{ background: "transparent", color: "#fff", border: "1.5px solid rgba(255,255,255,0.3)", borderRadius: 10, padding: "14px 28px", fontSize: 15, fontWeight: 700, cursor: "pointer" }}>
+                {hero.ctaSecondary}
+              </button>
             </div>
-            {!isMobile && <div style={{ flex: "0 0 auto" }}>
-              {hero.photoUrl ? (
-                <img
-                  src={hero.photoUrl}
-                  alt="Todd Ponsky"
-                  style={{
-                    width: 320,
-                    height: 380,
-                    objectFit: "contain",
-                    objectPosition: "center bottom",
-                    display: "block",
-                    // drop-shadow follows the transparent edges of the PNG
-                    filter: "drop-shadow(0 20px 40px rgba(0,0,0,0.5))",
-                  }}
-                />
-              ) : (
-                <>
-                  <div style={{ width: 280, height: 280, borderRadius: 24, background: "linear-gradient(135deg, #3b82f6, #1d4ed8)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 96, boxShadow: "0 30px 60px rgba(0,0,0,0.4)" }}>
-                    👤
-                  </div>
-                  <p style={{ textAlign: "center", color: "#475569", fontSize: 12, marginTop: 8 }}>Add photo in Admin → Hero</p>
-                </>
-              )}
-            </div>}
           </div>
+
+          {/* 3-step cards */}
+          <div style={{ borderTop: "1px solid rgba(255,255,255,0.08)", paddingTop: 40 }}>
+            <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#475569", marginBottom: 20 }}>
+              {hero.stepsLabel || "Get started in 3 steps"}
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(3, 1fr)", gap: 16 }}>
+
+              {/* Step 1 */}
+              <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 24 }}>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#2563eb", color: "#fff", fontSize: 14, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>1</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#f1f5f9", marginBottom: 8 }}>
+                  {hero.step1Title || "Stay in the loop"}
+                </div>
+                <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6, marginBottom: 18 }}>
+                  {hero.step1Desc || "Weekly newsletters on Substack and daily AI updates on LinkedIn — no fluff, just what matters."}
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  <a href={hero.step1Btn1Url || "https://substack.com/@toddponsky"} target="_blank" rel="noopener noreferrer"
+                    style={{ display: "inline-flex", alignItems: "center", background: "#FF6719", color: "#fff", borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
+                    {hero.step1Btn1 || "Substack"}
+                  </a>
+                  <a href={hero.step1Btn2Url || "https://linkedin.com/in/toddponsky"} target="_blank" rel="noopener noreferrer"
+                    style={{ display: "inline-flex", alignItems: "center", background: "rgba(255,255,255,0.1)", color: "#e2e8f0", borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, textDecoration: "none" }}>
+                    {hero.step1Btn2 || "LinkedIn"}
+                  </a>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 24 }}>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#2563eb", color: "#fff", fontSize: 14, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>2</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#f1f5f9", marginBottom: 8 }}>
+                  {hero.step2Title || "Browse free resources"}
+                </div>
+                <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6, marginBottom: 18 }}>
+                  {hero.step2Desc || "Tutorials, AI tool guides, and curated playlists — updated regularly and always free to access."}
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  <button onClick={() => scrollTo("learn")}
+                    style={{ display: "inline-flex", alignItems: "center", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+                    {hero.step2Btn || "Browse Library"}
+                  </button>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div style={{ background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 16, padding: 24 }}>
+                <div style={{ width: 32, height: 32, borderRadius: "50%", background: "#2563eb", color: "#fff", fontSize: 14, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>3</div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: "#f1f5f9", marginBottom: 8 }}>
+                  {hero.step3Title || "Work together"}
+                </div>
+                <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6, marginBottom: 18 }}>
+                  {hero.step3Desc || "Workshops, 1:1 coaching, or deep-dive consulting — reach out and let's figure out what you need."}
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                  <button onClick={() => scrollTo("contact")}
+                    style={{ display: "inline-flex", alignItems: "center", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, padding: "8px 16px", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
+                    {hero.step3Btn || "Contact Todd"}
+                  </button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
         </div>
       </section>
 

@@ -71,47 +71,61 @@ function SectionHeader({ title, onDelete, onMoveUp, onMoveDown, canUp, canDown, 
 
 function HeroEditor({ data, onChange }) {
   const set = (k, v) => onChange({ ...data, [k]: v });
-  const setStat = (i, k, v) => { const s = [...data.stats]; s[i] = { ...s[i], [k]: v }; set("stats", s); };
   return (
     <>
       <Field label="Badge text"><input style={inputStyle} value={data.badge} onChange={e => set("badge", e.target.value)} /></Field>
       <Field label="Main headline"><input style={inputStyle} value={data.headline} onChange={e => set("headline", e.target.value)} /></Field>
+      <Field label="Headline accent" hint='Shown in blue after the main headline. Default: "for Everyone."'>
+        <input style={inputStyle} placeholder="for Everyone." value={data.headlineAccent || ""} onChange={e => set("headlineAccent", e.target.value)} />
+      </Field>
       <Field label="Sub-headline"><textarea style={textareaStyle} rows={3} value={data.subheadline} onChange={e => set("subheadline", e.target.value)} /></Field>
-      <Field label="Primary CTA"><input style={inputStyle} value={data.ctaPrimary} onChange={e => set("ctaPrimary", e.target.value)} /></Field>
-      <Field label="Secondary CTA"><input style={inputStyle} value={data.ctaSecondary} onChange={e => set("ctaSecondary", e.target.value)} /></Field>
-      <Field label="Profile photo" hint="To use a local file: put your photo in the project's public/ folder (e.g. public/todd.jpg) then type /todd.jpg below. Or paste any direct image URL. Google Drive links won't work — use Imgur, Cloudinary, or a local file instead.">
-        <input style={inputStyle} placeholder="/todd.jpg  or  https://i.imgur.com/yourphoto.jpg"
-          value={data.photoUrl || ""} onChange={e => set("photoUrl", e.target.value)} />
-        {data.photoUrl && (
-          <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 12 }}>
-            <img src={data.photoUrl} alt="Preview" onError={e => { e.target.style.display = "none"; }}
-              style={{ width: 72, height: 72, borderRadius: 12, objectFit: "cover", border: "1.5px solid #e5e7eb" }} />
-            <div>
-              <p style={{ fontSize: 12, color: "#16a34a", fontWeight: 600 }}>✓ Photo set</p>
-              <button onClick={() => set("photoUrl", "")}
-                style={{ fontSize: 12, color: "#dc2626", background: "none", border: "none", cursor: "pointer", padding: 0, marginTop: 2 }}>
-                Remove photo
-              </button>
-            </div>
+      <Field label="Primary CTA button"><input style={inputStyle} value={data.ctaPrimary} onChange={e => set("ctaPrimary", e.target.value)} /></Field>
+      <Field label="Newsletter button label" hint="The orange button. Default: Subscribe to Newsletter">
+        <input style={inputStyle} placeholder="Subscribe to Newsletter" value={data.newsletterLabel || ""} onChange={e => set("newsletterLabel", e.target.value)} />
+      </Field>
+      <Field label="Secondary CTA button"><input style={inputStyle} value={data.ctaSecondary} onChange={e => set("ctaSecondary", e.target.value)} /></Field>
+
+      {/* ── 3-Step Cards ── */}
+      <div style={{ marginTop: 28, paddingTop: 24, borderTop: "1.5px solid #e5e7eb" }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 16, textTransform: "uppercase", letterSpacing: "0.07em" }}>3-Step Cards</div>
+
+        <Field label="Section label" hint='Appears above the cards. Default: "Get started in 3 steps"'>
+          <input style={inputStyle} placeholder="Get started in 3 steps" value={data.stepsLabel || ""} onChange={e => set("stepsLabel", e.target.value)} />
+        </Field>
+
+        {/* Step 1 */}
+        <div style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd", borderRadius: 12, padding: 16, marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#0369a1", marginBottom: 12 }}>Step 1</div>
+          <Field label="Title"><input style={inputStyle} placeholder="Stay in the loop" value={data.step1Title || ""} onChange={e => set("step1Title", e.target.value)} /></Field>
+          <Field label="Description"><textarea style={textareaStyle} rows={2} placeholder="Weekly newsletters on Substack…" value={data.step1Desc || ""} onChange={e => set("step1Desc", e.target.value)} /></Field>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 }}>
+            <Field label="Button 1 label"><input style={inputStyle} placeholder="Substack" value={data.step1Btn1 || ""} onChange={e => set("step1Btn1", e.target.value)} /></Field>
+            <Field label="Button 1 URL"><input style={inputStyle} placeholder="https://substack.com/@…" value={data.step1Btn1Url || ""} onChange={e => set("step1Btn1Url", e.target.value)} /></Field>
+            <Field label="Button 2 label"><input style={inputStyle} placeholder="LinkedIn" value={data.step1Btn2 || ""} onChange={e => set("step1Btn2", e.target.value)} /></Field>
+            <Field label="Button 2 URL"><input style={inputStyle} placeholder="https://linkedin.com/in/…" value={data.step1Btn2Url || ""} onChange={e => set("step1Btn2Url", e.target.value)} /></Field>
           </div>
-        )}
-      </Field>
-      <Field label="Stats bar">
-        <label style={{ display: "flex", alignItems: "center", gap: 10, cursor: "pointer", fontSize: 14 }}>
-          <input type="checkbox" checked={data.showStats !== false}
-            onChange={e => set("showStats", e.target.checked)}
-            style={{ width: 16, height: 16 }} />
-          Show stats bar on hero (500+ clients, etc.)
-        </label>
-      </Field>
-      <Field label="Stats (number + label)">
-        {data.stats.map((s, i) => (
-          <div key={i} style={{ display: "flex", gap: 8, marginBottom: 8 }}>
-            <input style={{ ...inputStyle, width: 90 }} placeholder="e.g. 500+" value={s.num} onChange={e => setStat(i, "num", e.target.value)} />
-            <input style={inputStyle} placeholder="Label" value={s.label} onChange={e => setStat(i, "label", e.target.value)} />
-          </div>
-        ))}
-      </Field>
+        </div>
+
+        {/* Step 2 */}
+        <div style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd", borderRadius: 12, padding: 16, marginBottom: 12 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#0369a1", marginBottom: 12 }}>Step 2</div>
+          <Field label="Title"><input style={inputStyle} placeholder="Browse free resources" value={data.step2Title || ""} onChange={e => set("step2Title", e.target.value)} /></Field>
+          <Field label="Description"><textarea style={textareaStyle} rows={2} placeholder="Tutorials, AI tool guides…" value={data.step2Desc || ""} onChange={e => set("step2Desc", e.target.value)} /></Field>
+          <Field label="Button label" hint="Links to the Learn section">
+            <input style={inputStyle} placeholder="Browse Library" value={data.step2Btn || ""} onChange={e => set("step2Btn", e.target.value)} />
+          </Field>
+        </div>
+
+        {/* Step 3 */}
+        <div style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd", borderRadius: 12, padding: 16 }}>
+          <div style={{ fontSize: 12, fontWeight: 700, color: "#0369a1", marginBottom: 12 }}>Step 3</div>
+          <Field label="Title"><input style={inputStyle} placeholder="Work together" value={data.step3Title || ""} onChange={e => set("step3Title", e.target.value)} /></Field>
+          <Field label="Description"><textarea style={textareaStyle} rows={2} placeholder="Workshops, 1:1 coaching…" value={data.step3Desc || ""} onChange={e => set("step3Desc", e.target.value)} /></Field>
+          <Field label="Button label" hint="Links to the Contact section">
+            <input style={inputStyle} placeholder="Contact Todd" value={data.step3Btn || ""} onChange={e => set("step3Btn", e.target.value)} />
+          </Field>
+        </div>
+      </div>
     </>
   );
 }
@@ -223,13 +237,6 @@ function PlaylistsEditor({ playlists, onChange }) {
   const removeVideo = (pi, vi) => {
     const u = [...playlists]; u[pi].videos = u[pi].videos.filter((_, i) => i !== vi); onChange(u);
   };
-  const moveVideo = (pi, vi, dir) => {
-    const u = [...playlists]; const videos = [...u[pi].videos];
-    const swapWith = vi + dir;
-    if (swapWith < 0 || swapWith >= videos.length) return;
-    [videos[vi], videos[swapWith]] = [videos[swapWith], videos[vi]];
-    u[pi] = { ...u[pi], videos }; onChange(u);
-  };
 
   return (
     <>
@@ -260,16 +267,7 @@ function PlaylistsEditor({ playlists, onChange }) {
             Videos ({pl.videos.length})
           </div>
           {pl.videos.map((v, vi) => (
-            <div key={vi} style={{ display: "flex", gap: 6, marginBottom: 8, alignItems: "center" }}>
-              {/* Reorder arrows */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 2, flexShrink: 0 }}>
-                <Btn variant="ghost" small onClick={() => moveVideo(pi, vi, -1)} disabled={vi === 0} style={{ padding: "2px 5px" }}>
-                  <ChevronUp size={12} />
-                </Btn>
-                <Btn variant="ghost" small onClick={() => moveVideo(pi, vi, 1)} disabled={vi === pl.videos.length - 1} style={{ padding: "2px 5px" }}>
-                  <ChevronDown size={12} />
-                </Btn>
-              </div>
+            <div key={vi} style={{ display: "flex", gap: 8, marginBottom: 8, alignItems: "center" }}>
               <input style={{ ...inputStyle, width: 115 }} value={v.ytId} placeholder="YouTube ID" onChange={e => updateVideo(pi, vi, "ytId", e.target.value)} />
               <input style={{ ...inputStyle, flex: 3 }} value={v.title} placeholder="Title" onChange={e => updateVideo(pi, vi, "title", e.target.value)} />
               <input style={{ ...inputStyle, width: 68 }} value={v.duration} placeholder="0:00" onChange={e => updateVideo(pi, vi, "duration", e.target.value)} />
