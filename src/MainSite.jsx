@@ -408,7 +408,7 @@ export default function MainSite({ content, onAdminClick }) {
                   <div style={{ display: "flex", gap: 8 }}>
                     <button onClick={() => scrollTo("learn")}
                       style={{ display: "inline-flex", alignItems: "center", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-                      {hero.step2Btn || "Browse Library"}
+                      {hero.step2Btn || "Start Learning"}
                     </button>
                   </div>
                 </div>
