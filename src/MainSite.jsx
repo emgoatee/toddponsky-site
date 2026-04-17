@@ -370,7 +370,7 @@ export default function MainSite({ content, onAdminClick }) {
 
             {/* Right — 3-step cards */}
             <div style={{ flex: "1 1 340px" }}>
-              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#475569", marginBottom: 14 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", color: "#93c5fd", marginBottom: 14 }}>
                 {hero.stepsLabel || "Get started in 3 steps"}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -381,7 +381,7 @@ export default function MainSite({ content, onAdminClick }) {
                     <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#2563eb", color: "#fff", fontSize: 13, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>1</div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: "#f1f5f9" }}>{hero.step1Title || "Stay in the loop"}</div>
                   </div>
-                  <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6, marginBottom: 14 }}>
+                  <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.6, marginBottom: 14 }}>
                     {hero.step1Desc || "Weekly newsletters on Substack and daily AI updates on LinkedIn — no fluff, just what matters."}
                   </p>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -402,7 +402,7 @@ export default function MainSite({ content, onAdminClick }) {
                     <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#2563eb", color: "#fff", fontSize: 13, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>2</div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: "#f1f5f9" }}>{hero.step2Title || "Browse free resources"}</div>
                   </div>
-                  <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6, marginBottom: 14 }}>
+                  <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.6, marginBottom: 14 }}>
                     {hero.step2Desc || "Tutorials, AI tool guides, and curated playlists — updated regularly and always free to access."}
                   </p>
                   <div style={{ display: "flex", gap: 8 }}>
@@ -419,13 +419,13 @@ export default function MainSite({ content, onAdminClick }) {
                     <div style={{ width: 28, height: 28, borderRadius: "50%", background: "#2563eb", color: "#fff", fontSize: 13, fontWeight: 800, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>3</div>
                     <div style={{ fontSize: 14, fontWeight: 700, color: "#f1f5f9" }}>{hero.step3Title || "Work together"}</div>
                   </div>
-                  <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6, marginBottom: 14 }}>
+                  <p style={{ fontSize: 13, color: "#94a3b8", lineHeight: 1.6, marginBottom: 14 }}>
                     {hero.step3Desc || "Workshops, 1:1 coaching, or deep-dive consulting — reach out and let's figure out what you need."}
                   </p>
                   <div style={{ display: "flex", gap: 8 }}>
                     <button onClick={() => scrollTo("contact")}
                       style={{ display: "inline-flex", alignItems: "center", background: "#2563eb", color: "#fff", border: "none", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
-                      {hero.step3Btn || "Contact Todd"}
+                      {hero.step3Btn || "Work with us"}
                     </button>
                   </div>
                 </div>
