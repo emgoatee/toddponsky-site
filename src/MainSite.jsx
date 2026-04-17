@@ -362,7 +362,9 @@ export default function MainSite({ content, onAdminClick }) {
                 <br /><span style={{ color: "#60a5fa" }}>{hero.headlineAccent || "for Everyone."}</span>
               </h1>
               <p style={{ fontSize: 19, color: "#94a3b8", lineHeight: 1.75, maxWidth: 460 }}>
-                {hero.subheadline}
+                {hero.subheadline.split("\n").map((line, i, arr) => (
+                  <span key={i}>{line}{i < arr.length - 1 && <br />}</span>
+                ))}
               </p>
             </div>
 
