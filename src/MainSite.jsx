@@ -354,14 +354,14 @@ export default function MainSite({ content, onAdminClick }) {
 
             {/* Left — headline */}
             <div style={{ flex: "1 1 380px", color: "#fff" }}>
-              <span style={{ display: "inline-block", background: "rgba(59,130,246,0.2)", color: "#93c5fd", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 999, marginBottom: 24 }}>
+              <span style={{ display: "inline-block", background: "rgba(59,130,246,0.2)", color: "#93c5fd", fontSize: 11, fontWeight: 700, letterSpacing: "0.12em", textTransform: "uppercase", padding: "4px 12px", borderRadius: 999, marginBottom: 28 }}>
                 {hero.badge}
               </span>
-              <h1 style={{ fontSize: "clamp(34px,4.5vw,54px)", fontWeight: 800, lineHeight: 1.1, marginBottom: 20, letterSpacing: "-1px" }}>
+              <h1 style={{ fontSize: "clamp(40px,5.5vw,64px)", fontWeight: 800, lineHeight: 1.08, marginBottom: 24, letterSpacing: "-1.5px" }}>
                 {hero.headline.replace(/\.$/, "")}
                 <br /><span style={{ color: "#60a5fa" }}>{hero.headlineAccent || "for Everyone."}</span>
               </h1>
-              <p style={{ fontSize: 18, color: "#94a3b8", lineHeight: 1.7, maxWidth: 460 }}>
+              <p style={{ fontSize: 19, color: "#94a3b8", lineHeight: 1.75, maxWidth: 460 }}>
                 {hero.subheadline}
               </p>
             </div>
@@ -388,7 +388,7 @@ export default function MainSite({ content, onAdminClick }) {
                       {hero.step1Btn1 || "Substack"}
                     </a>
                     <a href={hero.step1Btn2Url || "https://linkedin.com/in/toddponsky"} target="_blank" rel="noopener noreferrer"
-                      style={{ display: "inline-flex", alignItems: "center", background: "rgba(255,255,255,0.1)", color: "#e2e8f0", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 600, textDecoration: "none" }}>
+                      style={{ display: "inline-flex", alignItems: "center", background: "#0077B5", color: "#fff", borderRadius: 8, padding: "7px 14px", fontSize: 12, fontWeight: 600, textDecoration: "none" }}>
                       {hero.step1Btn2 || "LinkedIn"}
                     </a>
                   </div>
