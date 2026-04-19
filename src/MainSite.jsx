@@ -257,9 +257,27 @@ export default function MainSite({ content, onAdminClick }) {
 
   const currentPlaylist = content.playlists.find((p) => p.id === activePlaylist) || content.playlists[0];
 
-  const handleSubmit = (e) => {
+  const [formError, setFormError] = useState(null);
+  const [formSubmitting, setFormSubmitting] = useState(false);
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setFormSent(true);
+    setFormError(null);
+    setFormSubmitting(true);
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...formData, to: content.contactEmail }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Failed to send");
+      setFormSent(true);
+    } catch (err) {
+      setFormError(err.message || "Something went wrong. Please try again.");
+    } finally {
+      setFormSubmitting(false);
+    }
   };
 
   const { hero, about, services, youtubeChannelUrl } = content;
@@ -680,11 +698,16 @@ export default function MainSite({ content, onAdminClick }) {
                   placeholder="Tell me about your goals, timeline, and anything else that would help…"
                   style={{ width: "100%", border: "1.5px solid #e2e8f0", borderRadius: 8, padding: "10px 12px", fontSize: 14, outline: "none", resize: "vertical" }} />
               </div>
-              <button type="submit"
-                style={{ background: "#2563eb", color: "#fff", border: "none", borderRadius: 10, padding: "14px 0", fontSize: 15, fontWeight: 700, cursor: "pointer" }}
-                onMouseEnter={(e) => { e.currentTarget.style.background = "#1d4ed8"; }}
-                onMouseLeave={(e) => { e.currentTarget.style.background = "#2563eb"; }}>
-                Send Message →
+              {formError && (
+                <div style={{ background: "#fef2f2", border: "1.5px solid #fca5a5", borderRadius: 10, padding: "12px 16px", fontSize: 14, color: "#dc2626" }}>
+                  ⚠ {formError}
+                </div>
+              )}
+              <button type="submit" disabled={formSubmitting}
+                style={{ background: formSubmitting ? "#93c5fd" : "#2563eb", color: "#fff", border: "none", borderRadius: 10, padding: "14px 0", fontSize: 15, fontWeight: 700, cursor: formSubmitting ? "not-allowed" : "pointer" }}
+                onMouseEnter={(e) => { if (!formSubmitting) e.currentTarget.style.background = "#1d4ed8"; }}
+                onMouseLeave={(e) => { if (!formSubmitting) e.currentTarget.style.background = "#2563eb"; }}>
+                {formSubmitting ? "Sending…" : "Send Message →"}
               </button>
             </form>
           )}
