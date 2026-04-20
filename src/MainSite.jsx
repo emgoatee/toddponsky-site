@@ -179,7 +179,7 @@ const SECTION_LABELS = {
   contact: "Contact",
 };
 
-const ALL_CATEGORIES = ["All", "Writing & Content", "Image Generation", "Video", "Productivity", "Audio & Voice", "Analytics & Data"];
+const ALL_CATEGORIES = ["All", "Writing & Content", "Image Generation", "Video", "Productivity", "Audio & Voice", "Analytics & Data", "Education"];
 
 export default function MainSite({ content, onAdminClick }) {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -263,12 +263,17 @@ export default function MainSite({ content, onAdminClick }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError(null);
+    const formspreeId = content.formspreeId?.trim();
+    if (!formspreeId) {
+      setFormError("Contact form not configured yet. Add a Formspree ID in Admin → Settings.");
+      return;
+    }
     setFormSubmitting(true);
     try {
-      const res = await fetch("/api/contact", {
+      const res = await fetch(`https://formspree.io/f/${formspreeId}`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...formData, to: content.contactEmail }),
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(formData),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || "Failed to send");

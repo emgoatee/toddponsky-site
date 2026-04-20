@@ -148,7 +148,7 @@ export const DEFAULT_CONTENT = {
     },
   ],
 
-  youtubeChannelUrl: "https://youtube.com/@toddponsky",
+  youtubeChannelUrl: "https://youtube.com/@tponsky",
   // Your channel ID (starts with UC...) — find it at youtube.com → your channel → About → Share → Copy channel ID
   youtubeChannelId: "UC5_X-VV0ow3VvDT7SOcjzaw",
   contactEmail: "todd@toddponsky.com",
@@ -186,4 +186,5 @@ export const TOOL_CATEGORIES = [
   "Productivity",
   "Audio & Voice",
   "Analytics & Data",
+  "Education",
 ];
