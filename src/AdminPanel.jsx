@@ -165,6 +165,11 @@ function ToolsEditor({ tools, onChange }) {
 
   const update = (i, k, v) => { const t = [...tools]; t[i] = { ...t[i], [k]: v }; onChange(t); };
   const remove = (i) => onChange(tools.filter((_, idx) => idx !== i));
+  const move = (i, dir) => {
+    const t = [...tools]; const sw = i + dir;
+    if (sw < 0 || sw >= t.length) return;
+    [t[i], t[sw]] = [t[sw], t[i]]; onChange(t);
+  };
   const add = () => {
     if (!draft.name.trim() || !draft.url.trim()) return;
     onChange([...tools, draft]);
@@ -200,6 +205,8 @@ function ToolsEditor({ tools, onChange }) {
             <select style={{ ...inputStyle, flex: 2 }} value={tool.category} onChange={e => update(i, "category", e.target.value)}>
               {TOOL_CATEGORIES.map(c => <option key={c}>{c}</option>)}
             </select>
+            <Btn variant="ghost" small onClick={() => move(i, -1)} disabled={i === 0}><ChevronUp size={13} /></Btn>
+            <Btn variant="ghost" small onClick={() => move(i, 1)} disabled={i === tools.length - 1}><ChevronDown size={13} /></Btn>
             <Btn variant="danger" small onClick={() => remove(i)}><Trash2 size={13} /></Btn>
           </div>
           <input style={{ ...inputStyle, marginBottom: 8 }} value={tool.url} placeholder="URL" onChange={e => update(i, "url", e.target.value)} />
@@ -449,8 +456,13 @@ function SettingsEditor({ content, onChange }) {
           value={content.youtubeChannelId || ""}
           onChange={e => onChange({ ...content, youtubeChannelId: e.target.value })} />
       </Field>
-      <Field label="Contact email">
+      <Field label="Contact email" hint="For your reference only — emails are routed via Formspree below.">
         <input style={inputStyle} type="email" value={content.contactEmail} onChange={e => onChange({ ...content, contactEmail: e.target.value })} />
+      </Field>
+      <Field label="Formspree form ID" hint="Sign up free at formspree.io → New Form → paste the ID here (e.g. xpzgakbn). Emails go to whatever address you set in Formspree.">
+        <input style={inputStyle} placeholder="e.g. xpzgakbn"
+          value={content.formspreeId || ""}
+          onChange={e => onChange({ ...content, formspreeId: e.target.value })} />
       </Field>
       <Field label="Admin password" hint="⚠ Change this before going live. Protects the admin panel.">
         <input style={inputStyle} value={content.adminPassword} onChange={e => onChange({ ...content, adminPassword: e.target.value })} />
