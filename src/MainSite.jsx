@@ -512,7 +512,7 @@ export default function MainSite({ content, onAdminClick }) {
             ))}
           </div>
           <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(300px, 1fr))", gap: 20 }}>
-            {(!toolsExpanded ? filteredTools.slice(0, isMobile ? 1 : 3) : filteredTools).map((tool) => (
+            {(!toolsExpanded ? filteredTools.slice(0, 3) : filteredTools).map((tool) => (
               <a key={tool.name} href={tool.url} target="_blank" rel="noopener noreferrer"
                 style={{ background: "#ffffff", border: "1.5px solid #c8dcea", borderRadius: 14, padding: 20, textDecoration: "none", display: "block" }}
                 onMouseEnter={(e) => { e.currentTarget.style.borderColor = "#93c5fd"; e.currentTarget.style.boxShadow = "0 4px 20px rgba(37,99,235,0.1)"; }}
@@ -532,8 +532,8 @@ export default function MainSite({ content, onAdminClick }) {
           {filteredTools.length === 0 && (
             <div style={{ textAlign: "center", padding: "64px 0", color: "#94a3b8" }}>No tools match your search.</div>
           )}
-          {filteredTools.length > (isMobile ? 1 : 3) && (
-            <MoreButtonDark expanded={toolsExpanded} count={filteredTools.length - (isMobile ? 1 : 3)} onClick={() => setToolsExpanded(e => !e)} />
+          {filteredTools.length > (3) && (
+            <MoreButtonDark expanded={toolsExpanded} count={filteredTools.length - (3)} onClick={() => setToolsExpanded(e => !e)} />
           )}
         </div>
       </section>}
@@ -559,7 +559,7 @@ export default function MainSite({ content, onAdminClick }) {
           {currentPlaylist && (() => {
             // Use YouTube-fetched videos if available, else fall back to manual list
             const activeVideos = ytPlaylistVideos[currentPlaylist.id] ?? currentPlaylist.videos ?? [];
-            const shownVideos = learnExpanded ? activeVideos : activeVideos.slice(0, isMobile ? 1 : 3);
+            const shownVideos = learnExpanded ? activeVideos : activeVideos.slice(0, 3);
             return (
               <>
                 <p style={{ textAlign: "center", color: "#4b6280", fontSize: 15, marginBottom: 28 }}>{currentPlaylist.description}</p>
@@ -606,8 +606,8 @@ export default function MainSite({ content, onAdminClick }) {
                         </a>
                       ))}
                     </div>
-                    {activeVideos.length > (isMobile ? 1 : 3) && (
-                      <MoreButton expanded={learnExpanded} count={activeVideos.length - (isMobile ? 1 : 3)} onClick={() => setLearnExpanded(e => !e)} />
+                    {activeVideos.length > (3) && (
+                      <MoreButton expanded={learnExpanded} count={activeVideos.length - (3)} onClick={() => setLearnExpanded(e => !e)} />
                     )}
                   </>
                 )}
