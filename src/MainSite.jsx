@@ -492,10 +492,10 @@ export default function MainSite({ content, onAdminClick }) {
       {isVisible("tools") && <section id="tools" style={{ padding: "96px 24px", background: "#e2edf7" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Curated Resources</span>
-            <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>AI Tools Directory</h2>
+            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>{content.toolsSection?.eyebrow || "Curated Resources"}</span>
+            <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>{content.toolsSection?.title || "AI Tools Directory"}</h2>
             <p style={{ fontSize: 17, color: "#64748b", maxWidth: 520, margin: "0 auto" }}>
-              A hand-picked collection of the AI tools worth knowing — vetted, categorized, and updated regularly.
+              {content.toolsSection?.subtitle || "A hand-picked collection of the AI tools worth knowing — vetted, categorized, and updated regularly."}
             </p>
           </div>
           <div style={{ position: "relative", maxWidth: 480, margin: "0 auto 20px" }}>
@@ -542,10 +542,10 @@ export default function MainSite({ content, onAdminClick }) {
       {isVisible("learn") && <section id="learn" style={{ padding: "96px 24px", background: "#eaf3fa" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Free Education</span>
-            <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>AI for Everyone</h2>
+            <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>{content.learnSection?.eyebrow || "Free Education"}</span>
+            <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>{content.learnSection?.title || "AI for Everyone"}</h2>
             <p style={{ fontSize: 17, color: "#4b6280", maxWidth: 520, margin: "0 auto" }}>
-              Structured playlists to take you from AI-curious to AI-confident — at your own pace.
+              {content.learnSection?.subtitle || "Structured playlists to take you from AI-curious to AI-confident — at your own pace."}
             </p>
           </div>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 10, justifyContent: "center", marginBottom: 36 }}>

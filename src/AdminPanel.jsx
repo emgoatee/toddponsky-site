@@ -159,9 +159,10 @@ function AboutEditor({ data, onChange }) {
   );
 }
 
-function ToolsEditor({ tools, onChange }) {
+function ToolsEditor({ tools, onChange, section = {}, onSectionChange }) {
   const blank = { name: "", category: "Writing & Content", description: "", url: "", featured: false };
   const [draft, setDraft] = useState(blank);
+  const setSection = (k, v) => onSectionChange({ ...section, [k]: v });
 
   const update = (i, k, v) => { const t = [...tools]; t[i] = { ...t[i], [k]: v }; onChange(t); };
   const remove = (i) => onChange(tools.filter((_, idx) => idx !== i));
@@ -178,6 +179,20 @@ function ToolsEditor({ tools, onChange }) {
 
   return (
     <>
+      {/* Section header text */}
+      <div style={{ background: "#f8fafc", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: 16, marginBottom: 24 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.07em" }}>Section Header</div>
+        <Field label="Eyebrow label" hint='Small text above the title. Default: "Curated Resources"'>
+          <input style={inputStyle} placeholder="Curated Resources" value={section.eyebrow || ""} onChange={e => setSection("eyebrow", e.target.value)} />
+        </Field>
+        <Field label="Title" hint='Default: "AI Tools Directory"'>
+          <input style={inputStyle} placeholder="AI Tools Directory" value={section.title || ""} onChange={e => setSection("title", e.target.value)} />
+        </Field>
+        <Field label="Subtitle">
+          <textarea style={textareaStyle} rows={2} placeholder="A hand-picked collection of the AI tools worth knowing…" value={section.subtitle || ""} onChange={e => setSection("subtitle", e.target.value)} />
+        </Field>
+      </div>
+
       {/* Add new */}
       <div style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd", borderRadius: 12, padding: 16, marginBottom: 24 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: "#0369a1", marginBottom: 10 }}>➕ Add New Tool</div>
@@ -221,8 +236,9 @@ function ToolsEditor({ tools, onChange }) {
   );
 }
 
-function PlaylistsEditor({ playlists, onChange }) {
+function PlaylistsEditor({ playlists, onChange, section = {}, onSectionChange }) {
   const blank = { id: `pl_${Date.now()}`, title: "New Playlist", icon: "📋", description: "", videos: [] };
+  const setSection = (k, v) => onSectionChange({ ...section, [k]: v });
 
   const addPlaylist = () => onChange([...playlists, { ...blank, id: `pl_${Date.now()}` }]);
   const removePlaylist = (pi) => { if (window.confirm("Delete this entire playlist?")) onChange(playlists.filter((_, i) => i !== pi)); };
@@ -247,6 +263,20 @@ function PlaylistsEditor({ playlists, onChange }) {
 
   return (
     <>
+      {/* Section header text */}
+      <div style={{ background: "#f8fafc", border: "1.5px solid #e5e7eb", borderRadius: 12, padding: 16, marginBottom: 24 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#374151", marginBottom: 12, textTransform: "uppercase", letterSpacing: "0.07em" }}>Section Header</div>
+        <Field label="Eyebrow label" hint='Small text above the title. Default: "Free Education"'>
+          <input style={inputStyle} placeholder="Free Education" value={section.eyebrow || ""} onChange={e => setSection("eyebrow", e.target.value)} />
+        </Field>
+        <Field label="Title" hint='Default: "AI for Everyone"'>
+          <input style={inputStyle} placeholder="AI for Everyone" value={section.title || ""} onChange={e => setSection("title", e.target.value)} />
+        </Field>
+        <Field label="Subtitle">
+          <textarea style={textareaStyle} rows={2} placeholder="Structured playlists to take you from AI-curious to AI-confident…" value={section.subtitle || ""} onChange={e => setSection("subtitle", e.target.value)} />
+        </Field>
+      </div>
+
       <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
         <Btn onClick={addPlaylist}><Plus size={14} /> New Playlist</Btn>
       </div>
@@ -585,8 +615,8 @@ export default function AdminPanel({ content, updateContent, resetContent, onClo
           )}
           {active === "hero"      && <HeroEditor     data={content.hero}      onChange={v => set("hero", v)} />}
           {active === "about"     && <AboutEditor    data={content.about}     onChange={v => set("about", v)} />}
-          {active === "tools"     && <ToolsEditor    tools={content.tools}    onChange={v => set("tools", v)} />}
-          {active === "playlists" && <PlaylistsEditor playlists={content.playlists} onChange={v => set("playlists", v)} />}
+          {active === "tools"     && <ToolsEditor    tools={content.tools}    onChange={v => set("tools", v)} section={content.toolsSection || {}} onSectionChange={v => set("toolsSection", v)} />}
+          {active === "playlists" && <PlaylistsEditor playlists={content.playlists} onChange={v => set("playlists", v)} section={content.learnSection || {}} onSectionChange={v => set("learnSection", v)} />}
           {active === "services"  && <ServicesEditor services={content.services} onChange={v => set("services", v)} />}
           {active === "settings"  && <SettingsEditor content={content} onChange={updateContent} />}
         </main>
