@@ -366,16 +366,51 @@ function ServicesEditor({ services, onChange }) {
 
 function WorkshopEditor({ workshop, sections, onWorkshopChange, onSectionsChange }) {
   const setMeta = (k, v) => onWorkshopChange({ ...workshop, [k]: v });
-  const blank = () => ({ id: `ws_${Date.now()}`, badge: "", title: "", description: "", ytId: "" });
+  const blankSection = () => ({
+    id: `ws_${Date.now()}`,
+    badge: "",
+    title: "",
+    videos: [{ ytId: "", description: "" }],
+  });
+  const blankVideo = () => ({ ytId: "", description: "" });
 
-  const addSection = () => onSectionsChange([...sections, blank()]);
+  const addSection = () => onSectionsChange([...sections, blankSection()]);
   const removeSection = (i) => { if (window.confirm("Delete this section?")) onSectionsChange(sections.filter((_, idx) => idx !== i)); };
   const moveSection = (i, dir) => {
     const u = [...sections]; const sw = i + dir;
     if (sw < 0 || sw >= u.length) return;
     [u[i], u[sw]] = [u[sw], u[i]]; onSectionsChange(u);
   };
-  const update = (i, k, v) => { const u = [...sections]; u[i] = { ...u[i], [k]: v }; onSectionsChange(u); };
+  const updateSection = (i, k, v) => { const u = [...sections]; u[i] = { ...u[i], [k]: v }; onSectionsChange(u); };
+
+  // Video helpers
+  const addVideo = (si) => {
+    const u = [...sections];
+    u[si] = { ...u[si], videos: [...(u[si].videos || []), blankVideo()] };
+    onSectionsChange(u);
+  };
+  const removeVideo = (si, vi) => {
+    if ((sections[si].videos || []).length <= 1) return; // keep at least 1
+    const u = [...sections];
+    u[si] = { ...u[si], videos: u[si].videos.filter((_, idx) => idx !== vi) };
+    onSectionsChange(u);
+  };
+  const moveVideo = (si, vi, dir) => {
+    const u = [...sections];
+    const vids = [...(u[si].videos || [])];
+    const sw = vi + dir;
+    if (sw < 0 || sw >= vids.length) return;
+    [vids[vi], vids[sw]] = [vids[sw], vids[vi]];
+    u[si] = { ...u[si], videos: vids };
+    onSectionsChange(u);
+  };
+  const updateVideo = (si, vi, k, v) => {
+    const u = [...sections];
+    const vids = [...(u[si].videos || [])];
+    vids[vi] = { ...vids[vi], [k]: v };
+    u[si] = { ...u[si], videos: vids };
+    onSectionsChange(u);
+  };
 
   return (
     <>
@@ -383,34 +418,23 @@ function WorkshopEditor({ workshop, sections, onWorkshopChange, onSectionsChange
       <div style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd", borderRadius: 12, padding: 16, marginBottom: 28 }}>
         <div style={{ fontSize: 12, fontWeight: 700, color: "#0369a1", marginBottom: 12 }}>Page Settings</div>
         <Field label="Nav link label" hint="How it appears in the site navigation">
-          <input style={inputStyle} placeholder="AI Workshop"
-            value={workshop?.navLabel || ""}
-            onChange={e => setMeta("navLabel", e.target.value)} />
+          <input style={inputStyle} placeholder="AI Workshop" value={workshop?.navLabel || ""} onChange={e => setMeta("navLabel", e.target.value)} />
         </Field>
         <Field label="Page heading">
-          <input style={inputStyle} placeholder="AI Workshop"
-            value={workshop?.heading || ""}
-            onChange={e => setMeta("heading", e.target.value)} />
+          <input style={inputStyle} placeholder="AI Workshop" value={workshop?.heading || ""} onChange={e => setMeta("heading", e.target.value)} />
         </Field>
         <Field label="Sub-heading">
-          <input style={inputStyle} placeholder="A hands-on, section-by-section guide…"
-            value={workshop?.subheading || ""}
-            onChange={e => setMeta("subheading", e.target.value)} />
+          <input style={inputStyle} placeholder="A hands-on, section-by-section guide…" value={workshop?.subheading || ""} onChange={e => setMeta("subheading", e.target.value)} />
         </Field>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, cursor: "pointer" }}>
-            <input type="checkbox"
-              checked={workshop?.showInNav !== false}
-              onChange={e => setMeta("showInNav", e.target.checked)} />
-            Show in navigation
-          </label>
-        </div>
+        <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, cursor: "pointer" }}>
+          <input type="checkbox" checked={workshop?.showInNav !== false} onChange={e => setMeta("showInNav", e.target.checked)} />
+          Show in navigation
+        </label>
       </div>
 
-      {/* How-to hint */}
+      {/* Hint */}
       <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 20, background: "#f9fafb", padding: "10px 14px", borderRadius: 8, border: "1.5px solid #e5e7eb" }}>
-        💡 <strong>YouTube ID</strong> = the part after <code style={{ background: "#f3f4f6", padding: "1px 5px", borderRadius: 4 }}>?v=</code> in any YouTube URL.
-        Sections alternate: video left → video right → video left…
+        💡 <strong>YouTube Short ID</strong> = the part after <code style={{ background: "#f3f4f6", padding: "1px 5px", borderRadius: 4 }}>?v=</code> in any YouTube URL. Each section can hold multiple shorts with individual descriptions — users swipe through a carousel. Videos display in portrait (9:16).
       </p>
 
       <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
@@ -423,55 +447,84 @@ function WorkshopEditor({ workshop, sections, onWorkshopChange, onSectionsChange
         </div>
       )}
 
-      {sections.map((sec, i) => (
-        <Card key={sec.id || i}>
-          <SectionHeader
-            title={`Section ${i + 1}${sec.title ? " — " + sec.title : ""}`}
-            onDelete={() => removeSection(i)}
-            onMoveUp={() => moveSection(i, -1)}
-            onMoveDown={() => moveSection(i, 1)}
-            canUp={i > 0} canDown={i < sections.length - 1}
-            deleteLabel="Delete"
-          />
+      {sections.map((sec, si) => {
+        const videos = sec.videos || [];
+        return (
+          <Card key={sec.id || si}>
+            <SectionHeader
+              title={`Section ${si + 1}${sec.title ? " — " + sec.title : ""}`}
+              onDelete={() => removeSection(si)}
+              onMoveUp={() => moveSection(si, -1)}
+              onMoveDown={() => moveSection(si, 1)}
+              canUp={si > 0} canDown={si < sections.length - 1}
+              deleteLabel="Delete"
+            />
 
-          {/* Layout preview badge */}
-          <div style={{ marginBottom: 14 }}>
-            <span style={{
-              fontSize: 11, fontWeight: 700, background: i % 2 === 0 ? "#eff6ff" : "#f0fdf4",
-              color: i % 2 === 0 ? "#2563eb" : "#16a34a",
-              padding: "3px 10px", borderRadius: 999,
-            }}>
-              {i % 2 === 0 ? "▶ Video left · Text right" : "Text left · Video right ◀"}
-            </span>
-          </div>
+            {/* Layout badge */}
+            <div style={{ marginBottom: 14 }}>
+              <span style={{
+                fontSize: 11, fontWeight: 700,
+                background: si % 2 === 0 ? "#eff6ff" : "#f0fdf4",
+                color: si % 2 === 0 ? "#2563eb" : "#16a34a",
+                padding: "3px 10px", borderRadius: 999,
+              }}>
+                {si % 2 === 0 ? "▶ Video left · Text right" : "Text left · Video right ◀"}
+              </span>
+              <span style={{ marginLeft: 8, fontSize: 11, color: "#9ca3af", fontWeight: 600 }}>
+                {videos.length} {videos.length === 1 ? "video" : "videos"}
+              </span>
+            </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
-            <Field label="Badge (optional)" >
-              <input style={inputStyle} placeholder="e.g. Chapter 1"
-                value={sec.badge || ""}
-                onChange={e => update(i, "badge", e.target.value)} />
-            </Field>
-            <Field label="YouTube Video ID">
-              <input style={inputStyle} placeholder="e.g. dQw4w9WgXcQ"
-                value={sec.ytId || ""}
-                onChange={e => update(i, "ytId", e.target.value)} />
-            </Field>
-          </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+              <Field label="Badge (optional)">
+                <input style={inputStyle} placeholder="e.g. Chapter 1"
+                  value={sec.badge || ""} onChange={e => updateSection(si, "badge", e.target.value)} />
+              </Field>
+              <Field label="Section Title">
+                <input style={inputStyle} placeholder="e.g. Prompt Engineering Basics"
+                  value={sec.title || ""} onChange={e => updateSection(si, "title", e.target.value)} />
+              </Field>
+            </div>
 
-          <Field label="Section Title">
-            <input style={inputStyle} placeholder="e.g. Introduction to Prompt Engineering"
-              value={sec.title || ""}
-              onChange={e => update(i, "title", e.target.value)} />
-          </Field>
+            {/* Videos */}
+            <div style={{ marginTop: 8 }}>
+              <div style={{ fontSize: 11, fontWeight: 700, color: "#374151", marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.07em" }}>
+                Videos (carousel)
+              </div>
 
-          <Field label="Description" hint="Use blank lines to separate paragraphs.">
-            <textarea style={textareaStyle} rows={5}
-              placeholder="Describe what this section covers…"
-              value={sec.description || ""}
-              onChange={e => update(i, "description", e.target.value)} />
-          </Field>
-        </Card>
-      ))}
+              {videos.map((v, vi) => (
+                <div key={vi} style={{ background: "#f8fafc", border: "1.5px solid #e5e7eb", borderRadius: 10, padding: 12, marginBottom: 10 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: "#6b7280", minWidth: 20 }}>#{vi + 1}</span>
+                    <input
+                      style={{ ...inputStyle, flex: 1 }}
+                      placeholder="YouTube Short ID (e.g. dQw4w9WgXcQ)"
+                      value={v.ytId || ""}
+                      onChange={e => updateVideo(si, vi, "ytId", e.target.value)}
+                    />
+                    <Btn variant="ghost" small onClick={() => moveVideo(si, vi, -1)} disabled={vi === 0}><ChevronUp size={13} /></Btn>
+                    <Btn variant="ghost" small onClick={() => moveVideo(si, vi, 1)} disabled={vi === videos.length - 1}><ChevronDown size={13} /></Btn>
+                    <Btn variant="danger" small onClick={() => removeVideo(si, vi)} disabled={videos.length <= 1}>
+                      <Trash2 size={13} />
+                    </Btn>
+                  </div>
+                  <textarea
+                    style={{ ...textareaStyle, marginBottom: 0 }}
+                    rows={3}
+                    placeholder="Description for this specific video…"
+                    value={v.description || ""}
+                    onChange={e => updateVideo(si, vi, "description", e.target.value)}
+                  />
+                </div>
+              ))}
+
+              <Btn variant="ghost" small onClick={() => addVideo(si)}>
+                <Plus size={13} /> Add Video to Carousel
+              </Btn>
+            </div>
+          </Card>
+        );
+      })}
     </>
   );
 }
