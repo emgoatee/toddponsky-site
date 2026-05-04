@@ -243,19 +243,6 @@ function WorkshopSection({ section, index, total, isMobile }) {
         }
       </div>
 
-      {/* Section progress dots (across all sections) */}
-      <div style={{
-        display: "flex", alignItems: "center", justifyContent: "center",
-        gap: 6, marginTop: isMobile ? 32 : 48,
-      }}>
-        {Array.from({ length: total }).map((_, j) => (
-          <div key={j} style={{
-            width: j === index ? 20 : 7, height: 7, borderRadius: 999,
-            background: j === index ? "#2563eb" : "#e2e8f0",
-            transition: "width 0.2s",
-          }} />
-        ))}
-      </div>
     </section>
   );
 }
