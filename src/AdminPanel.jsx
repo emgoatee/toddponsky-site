@@ -1,7 +1,7 @@
 import { useState } from "react";
 import {
   X, Plus, Trash2, Save, RotateCcw, Lock, Eye, EyeOff,
-  ChevronUp, ChevronDown, Settings, FileText, Layout,
+  ChevronUp, ChevronDown, Settings, FileText, Layout, Video,
 } from "lucide-react";
 import { TOOL_CATEGORIES } from "./data.js";
 
@@ -137,6 +137,24 @@ function AboutEditor({ data, onChange }) {
   const removeRole = (i) => set("roles", data.roles.filter((_, idx) => idx !== i));
   return (
     <>
+      {/* Photo */}
+      <div style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd", borderRadius: 12, padding: 16, marginBottom: 24 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#0369a1", marginBottom: 12 }}>📸 Profile Photo</div>
+        <Field label="Photo URL" hint="Paste a direct image link (e.g. from your site's /public folder, Imgur, or any CDN). The image will appear in the About section.">
+          <input style={inputStyle} placeholder="https://yoursite.com/todd.png"
+            value={data.photoUrl || ""}
+            onChange={e => set("photoUrl", e.target.value)} />
+        </Field>
+        {data.photoUrl && (
+          <div style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 12 }}>
+            <img src={data.photoUrl} alt="Preview"
+              style={{ width: 72, height: 72, objectFit: "cover", borderRadius: "50%", border: "2px solid #bae6fd" }}
+              onError={e => { e.target.style.display = "none"; }} />
+            <span style={{ fontSize: 12, color: "#0369a1" }}>Preview (may not load if URL needs auth)</span>
+          </div>
+        )}
+      </div>
+
       <Field label="Section heading"><input style={inputStyle} value={data.heading} onChange={e => set("heading", e.target.value)} /></Field>
       <Field label="Bio — paragraph 1"><textarea style={textareaStyle} rows={4} value={data.bio1} onChange={e => set("bio1", e.target.value)} /></Field>
       <Field label="Bio — paragraph 2"><textarea style={textareaStyle} rows={4} value={data.bio2} onChange={e => set("bio2", e.target.value)} /></Field>
@@ -344,6 +362,120 @@ function ServicesEditor({ services, onChange }) {
   );
 }
 
+// ─── Workshop Editor ──────────────────────────────────────────────────────────
+
+function WorkshopEditor({ workshop, sections, onWorkshopChange, onSectionsChange }) {
+  const setMeta = (k, v) => onWorkshopChange({ ...workshop, [k]: v });
+  const blank = () => ({ id: `ws_${Date.now()}`, badge: "", title: "", description: "", ytId: "" });
+
+  const addSection = () => onSectionsChange([...sections, blank()]);
+  const removeSection = (i) => { if (window.confirm("Delete this section?")) onSectionsChange(sections.filter((_, idx) => idx !== i)); };
+  const moveSection = (i, dir) => {
+    const u = [...sections]; const sw = i + dir;
+    if (sw < 0 || sw >= u.length) return;
+    [u[i], u[sw]] = [u[sw], u[i]]; onSectionsChange(u);
+  };
+  const update = (i, k, v) => { const u = [...sections]; u[i] = { ...u[i], [k]: v }; onSectionsChange(u); };
+
+  return (
+    <>
+      {/* Page metadata */}
+      <div style={{ background: "#f0f9ff", border: "1.5px solid #bae6fd", borderRadius: 12, padding: 16, marginBottom: 28 }}>
+        <div style={{ fontSize: 12, fontWeight: 700, color: "#0369a1", marginBottom: 12 }}>Page Settings</div>
+        <Field label="Nav link label" hint="How it appears in the site navigation">
+          <input style={inputStyle} placeholder="AI Workshop"
+            value={workshop?.navLabel || ""}
+            onChange={e => setMeta("navLabel", e.target.value)} />
+        </Field>
+        <Field label="Page heading">
+          <input style={inputStyle} placeholder="AI Workshop"
+            value={workshop?.heading || ""}
+            onChange={e => setMeta("heading", e.target.value)} />
+        </Field>
+        <Field label="Sub-heading">
+          <input style={inputStyle} placeholder="A hands-on, section-by-section guide…"
+            value={workshop?.subheading || ""}
+            onChange={e => setMeta("subheading", e.target.value)} />
+        </Field>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <label style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 13, cursor: "pointer" }}>
+            <input type="checkbox"
+              checked={workshop?.showInNav !== false}
+              onChange={e => setMeta("showInNav", e.target.checked)} />
+            Show in navigation
+          </label>
+        </div>
+      </div>
+
+      {/* How-to hint */}
+      <p style={{ fontSize: 13, color: "#6b7280", marginBottom: 20, background: "#f9fafb", padding: "10px 14px", borderRadius: 8, border: "1.5px solid #e5e7eb" }}>
+        💡 <strong>YouTube ID</strong> = the part after <code style={{ background: "#f3f4f6", padding: "1px 5px", borderRadius: 4 }}>?v=</code> in any YouTube URL.
+        Sections alternate: video left → video right → video left…
+      </p>
+
+      <div style={{ display: "flex", justifyContent: "flex-end", marginBottom: 16 }}>
+        <Btn onClick={addSection}><Plus size={14} /> New Section</Btn>
+      </div>
+
+      {sections.length === 0 && (
+        <div style={{ textAlign: "center", padding: "32px 0", color: "#9ca3af", fontSize: 13, border: "1.5px dashed #e5e7eb", borderRadius: 10 }}>
+          No sections yet. Click "+ New Section" to add the first one.
+        </div>
+      )}
+
+      {sections.map((sec, i) => (
+        <Card key={sec.id || i}>
+          <SectionHeader
+            title={`Section ${i + 1}${sec.title ? " — " + sec.title : ""}`}
+            onDelete={() => removeSection(i)}
+            onMoveUp={() => moveSection(i, -1)}
+            onMoveDown={() => moveSection(i, 1)}
+            canUp={i > 0} canDown={i < sections.length - 1}
+            deleteLabel="Delete"
+          />
+
+          {/* Layout preview badge */}
+          <div style={{ marginBottom: 14 }}>
+            <span style={{
+              fontSize: 11, fontWeight: 700, background: i % 2 === 0 ? "#eff6ff" : "#f0fdf4",
+              color: i % 2 === 0 ? "#2563eb" : "#16a34a",
+              padding: "3px 10px", borderRadius: 999,
+            }}>
+              {i % 2 === 0 ? "▶ Video left · Text right" : "Text left · Video right ◀"}
+            </span>
+          </div>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 10 }}>
+            <Field label="Badge (optional)" >
+              <input style={inputStyle} placeholder="e.g. Chapter 1"
+                value={sec.badge || ""}
+                onChange={e => update(i, "badge", e.target.value)} />
+            </Field>
+            <Field label="YouTube Video ID">
+              <input style={inputStyle} placeholder="e.g. dQw4w9WgXcQ"
+                value={sec.ytId || ""}
+                onChange={e => update(i, "ytId", e.target.value)} />
+            </Field>
+          </div>
+
+          <Field label="Section Title">
+            <input style={inputStyle} placeholder="e.g. Introduction to Prompt Engineering"
+              value={sec.title || ""}
+              onChange={e => update(i, "title", e.target.value)} />
+          </Field>
+
+          <Field label="Description" hint="Use blank lines to separate paragraphs.">
+            <textarea style={textareaStyle} rows={5}
+              placeholder="Describe what this section covers…"
+              value={sec.description || ""}
+              onChange={e => update(i, "description", e.target.value)} />
+          </Field>
+        </Card>
+      ))}
+    </>
+  );
+}
+
 // ─── Sections Manager ─────────────────────────────────────────────────────────
 
 const BUILT_IN_SECTIONS = [
@@ -502,13 +634,14 @@ function PasswordGate({ correctPassword, onSuccess }) {
 // ─── Nav config ───────────────────────────────────────────────────────────────
 
 const SIDEBAR = [
-  { id: "sections", label: "Sections & Pages", icon: <Layout size={15} /> },
-  { id: "hero",     label: "Hero",              icon: "🏠" },
-  { id: "about",    label: "About",             icon: "👤" },
-  { id: "tools",    label: "AI Tools",          icon: "🛠" },
-  { id: "playlists",label: "Playlists",         icon: "▶" },
-  { id: "services", label: "Services",          icon: "💼" },
-  { id: "settings", label: "Settings",          icon: <Settings size={15} /> },
+  { id: "sections",  label: "Sections & Pages", icon: <Layout size={15} /> },
+  { id: "hero",      label: "Hero",              icon: "🏠" },
+  { id: "about",     label: "About",             icon: "👤" },
+  { id: "tools",     label: "AI Tools",          icon: "🛠" },
+  { id: "playlists", label: "Playlists",         icon: "▶" },
+  { id: "workshop",  label: "AI Workshop",       icon: <Video size={15} /> },
+  { id: "services",  label: "Services",          icon: "💼" },
+  { id: "settings",  label: "Settings",          icon: <Settings size={15} /> },
 ];
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
@@ -627,6 +760,14 @@ export default function AdminPanel({ content, updateContent, resetContent, onClo
             </div>
             <PlaylistsEditor playlists={content.playlists} onChange={v => set("playlists", v)} />
           </>}
+          {active === "workshop" && (
+            <WorkshopEditor
+              workshop={content.workshop}
+              sections={content.workshopSections ?? []}
+              onWorkshopChange={v => set("workshop", v)}
+              onSectionsChange={v => set("workshopSections", v)}
+            />
+          )}
           {active === "services"  && <ServicesEditor services={content.services} onChange={v => set("services", v)} />}
           {active === "settings"  && <SettingsEditor content={content} onChange={updateContent} />}
         </main>

@@ -12,6 +12,8 @@ function mergeWithDefaults(parsed) {
     hero:              { ...DEFAULT_CONTENT.hero,              ...(parsed.hero              || {}) },
     about:             { ...DEFAULT_CONTENT.about,             ...(parsed.about             || {}) },
     sectionVisibility: { ...DEFAULT_CONTENT.sectionVisibility, ...(parsed.sectionVisibility || {}) },
+    workshop:          { ...DEFAULT_CONTENT.workshop,          ...(parsed.workshop          || {}) },
+    workshopSections:  parsed.workshopSections  ?? DEFAULT_CONTENT.workshopSections,
   };
 }
 

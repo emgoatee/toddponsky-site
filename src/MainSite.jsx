@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, Youtube, ExternalLink, ChevronRight, Play, Menu, X, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
+import WorkshopPage from "./WorkshopPage.jsx";
 
 // ─── Mobile helpers ───────────────────────────────────────────────────────────
 function useIsMobile() {
@@ -230,6 +231,10 @@ export default function MainSite({ content, onAdminClick }) {
   const navLinks = [
     ...visibleSections.map(id => ({ id, label: SECTION_LABELS[id], type: "section" })),
     ...(content.customPages || []).map(p => ({ id: p.id, label: p.navLabel, type: "page" })),
+    // Workshop page — shown if enabled in settings
+    ...(content.workshop?.showInNav !== false
+      ? [{ id: "__workshop", label: content.workshop?.navLabel || "AI Workshop", type: "workshop" }]
+      : []),
   ];
 
   const scrollTo = (id) => {
@@ -238,7 +243,7 @@ export default function MainSite({ content, onAdminClick }) {
   };
 
   const handleNavClick = (link) => {
-    if (link.type === "page") {
+    if (link.type === "page" || link.type === "workshop") {
       setActivePage(link.id);
       setMobileOpen(false);
       window.scrollTo(0, 0);
@@ -287,6 +292,16 @@ export default function MainSite({ content, onAdminClick }) {
 
   const { hero, about, services, youtubeChannelUrl } = content;
   const isVisible = (id) => content.sectionVisibility?.[id] !== false;
+
+  // ── Workshop page renderer ──
+  if (activePage === "__workshop") {
+    return (
+      <WorkshopPage
+        content={content}
+        onBack={() => { setActivePage(null); window.scrollTo(0, 0); }}
+      />
+    );
+  }
 
   // ── Custom page renderer ──
   if (activePage) {

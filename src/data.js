@@ -148,6 +148,17 @@ export const DEFAULT_CONTENT = {
     },
   ],
 
+  // ─── Workshop page ────────────────────────────────────────────────────────────
+  workshop: {
+    navLabel: "AI Workshop",
+    heading: "AI Workshop",
+    subheading: "A hands-on, section-by-section guide to AI tools and strategies.",
+    showInNav: true,
+  },
+  // Each section: { id, badge, title, description, ytId }
+  // badge = optional eyebrow text (e.g. "Chapter 1"); ytId = YouTube video ID
+  workshopSections: [],
+
   youtubeChannelUrl: "https://youtube.com/@tponsky",
   // Your channel ID (starts with UC...) — find it at youtube.com → your channel → About → Share → Copy channel ID
   youtubeChannelId: "UC5_X-VV0ow3VvDT7SOcjzaw",
