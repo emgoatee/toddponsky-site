@@ -216,37 +216,6 @@ function WorkshopSection({ section, index, total, isMobile }) {
         )}
       </div>
 
-      {/* Video thumbnail strip (if multiple) */}
-      {hasMultiple && (
-        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginTop: 4 }}>
-          {videos.map((v, vi) => (
-            <button
-              key={vi}
-              onClick={() => goTo(vi)}
-              style={{
-                width: 52, height: 92, borderRadius: 10, overflow: "hidden",
-                border: vi === activeIdx ? "2px solid #2563eb" : "2px solid #e2e8f0",
-                cursor: "pointer", padding: 0, background: "#1e293b",
-                transition: "border-color 0.15s",
-                flexShrink: 0,
-              }}
-            >
-              {v.ytId ? (
-                <img
-                  src={`https://img.youtube.com/vi/${v.ytId}/hqdefault.jpg`}
-                  alt={`Video ${vi + 1}`}
-                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
-                  onError={e => { e.target.style.display = "none"; }}
-                />
-              ) : (
-                <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <Play size={14} color="#475569" />
-                </div>
-              )}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
 
