@@ -229,8 +229,8 @@ function WorkshopSection({ section, index, total, isMobile }) {
         maxWidth: 960, margin: "0 auto",
         display: isMobile ? "flex" : "grid",
         flexDirection: isMobile ? "column" : undefined,
-        // Portrait video is narrow; give text more room
-        gridTemplateColumns: isMobile ? undefined : "260px 1fr",
+        // Flip template so video column is always 260px, text always gets 1fr
+        gridTemplateColumns: isMobile ? undefined : isEven ? "260px 1fr" : "1fr 260px",
         gap: isMobile ? 32 : 64,
         alignItems: "flex-start",
       }}>
