@@ -1,6 +1,5 @@
 import { useState, useEffect, useRef } from "react";
 import { Search, Youtube, ExternalLink, ChevronRight, Play, Menu, X, ArrowLeft, ChevronDown, ChevronUp } from "lucide-react";
-import WorkshopPage from "./WorkshopPage.jsx";
 
 // ─── Mobile helpers ───────────────────────────────────────────────────────────
 function useIsMobile() {
@@ -182,7 +181,7 @@ const SECTION_LABELS = {
 
 const ALL_CATEGORIES = ["All", "Writing & Content", "Image Generation", "Video", "Productivity", "Audio & Voice", "Analytics & Data", "Education"];
 
-export default function MainSite({ content, onAdminClick }) {
+export default function MainSite({ content, onAdminClick, onNavigate }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchQuery, setSearchQuery] = useState("");
@@ -243,7 +242,10 @@ export default function MainSite({ content, onAdminClick }) {
   };
 
   const handleNavClick = (link) => {
-    if (link.type === "page" || link.type === "workshop") {
+    if (link.type === "workshop") {
+      onNavigate("/ai-workshop");
+      setMobileOpen(false);
+    } else if (link.type === "page") {
       setActivePage(link.id);
       setMobileOpen(false);
       window.scrollTo(0, 0);
@@ -292,16 +294,6 @@ export default function MainSite({ content, onAdminClick }) {
 
   const { hero, about, services, youtubeChannelUrl } = content;
   const isVisible = (id) => content.sectionVisibility?.[id] !== false;
-
-  // ── Workshop page renderer ──
-  if (activePage === "__workshop") {
-    return (
-      <WorkshopPage
-        content={content}
-        onBack={() => { setActivePage(null); window.scrollTo(0, 0); }}
-      />
-    );
-  }
 
   // ── Custom page renderer ──
   if (activePage) {
