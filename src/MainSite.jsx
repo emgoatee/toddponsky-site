@@ -699,13 +699,13 @@ export default function MainSite({ content, onAdminClick, onNavigate }) {
           <div style={{ textAlign: "center", marginBottom: 40 }}>
             <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>Get in Touch</span>
             <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 12 }}>Let's Work Together</h2>
-            <p style={{ fontSize: 16, color: "#64748b" }}>Fill out the form and Todd will get back to you within 48 hours.</p>
+            <p style={{ fontSize: 16, color: "#64748b" }}>Fill out the form and our team will get back to you at their earliest availability ✅</p>
           </div>
           {formSent ? (
             <div style={{ background: "#f0fdf4", border: "1.5px solid #86efac", borderRadius: 20, padding: 48, textAlign: "center" }}>
               <div style={{ fontSize: 56, marginBottom: 16 }}>✅</div>
               <h3 style={{ fontSize: 24, fontWeight: 800, color: "#0f172a", marginBottom: 8 }}>Message Sent!</h3>
-              <p style={{ color: "#475569" }}>Thanks for reaching out. Todd will be in touch soon.</p>
+              <p style={{ color: "#475569" }}>Thanks for reaching out. Our team will be in touch soon.</p>
             </div>
           ) : (
             <form onSubmit={handleSubmit} style={{ background: "#fff", border: "1.5px solid #e2e8f0", borderRadius: 20, padding: 36, boxShadow: "0 1px 4px rgba(0,0,0,0.06)", display: "flex", flexDirection: "column", gap: 18 }}>
