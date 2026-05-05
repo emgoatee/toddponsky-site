@@ -498,7 +498,6 @@ export default function MainSite({ content, onAdminClick, onNavigate }) {
                     maxHeight: 480,
                     objectFit: "cover", objectPosition: "top center",
                     borderRadius: 20,
-                    boxShadow: "0 8px 32px rgba(0,0,0,0.14)",
                     display: "block",
                   }}
                 />
