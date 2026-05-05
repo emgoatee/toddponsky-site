@@ -265,13 +265,11 @@ export default function WorkshopPage({ content, onBack }) {
           maxWidth: 1120, margin: "0 auto", padding: "0 24px", height: 64,
           display: "flex", alignItems: "center", justifyContent: "space-between",
         }}>
-          <span style={{ fontWeight: 800, fontSize: 20, color: "#0f172a" }}>Todd Ponsky</span>
           <button onClick={onBack} style={{
-            display: "flex", alignItems: "center", gap: 6, background: "#f1f5f9",
-            border: "none", borderRadius: 8, padding: "8px 14px", cursor: "pointer",
-            fontSize: 14, fontWeight: 600, color: "#475569",
+            fontWeight: 800, fontSize: 20, color: "#0f172a",
+            background: "none", border: "none", cursor: "pointer", padding: 0,
           }}>
-            <ArrowLeft size={15} /> Back to site
+            Todd Ponsky
           </button>
         </div>
       </nav>
