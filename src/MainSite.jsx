@@ -489,13 +489,13 @@ export default function MainSite({ content, onAdminClick, onNavigate }) {
 
             {/* Photo — right side, matches text column height */}
             {about.photoUrl && (
-              <div style={{ flex: "0 1 380px" }}>
+              <div style={{ flex: "0 1 266px" }}>
                 <img
                   src={about.photoUrl}
                   alt="Todd Ponsky"
                   style={{
                     width: "100%", height: "100%",
-                    maxHeight: 480,
+                    maxHeight: 336,
                     objectFit: "cover", objectPosition: "top center",
                     borderRadius: 20,
                     display: "block",
