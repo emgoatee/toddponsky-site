@@ -470,21 +470,12 @@ export default function MainSite({ content, onAdminClick, onNavigate }) {
       {/* ── ABOUT ── */}
       {isVisible("about") && <section id="about" style={{ padding: "96px 24px", background: "#d8e7f3" }}>
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: 64, alignItems: "center" }}>
-            <div style={{ flex: "1 1 420px" }}>
-              {about.photoUrl && (
-                <img
-                  src={about.photoUrl}
-                  alt="Todd Ponsky"
-                  style={{
-                    width: 100, height: 100, borderRadius: "50%",
-                    objectFit: "cover", marginBottom: 24,
-                    border: "3px solid #fff",
-                    boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
-                    display: "block",
-                  }}
-                />
-              )}
+
+          {/* Top row: text left, photo right */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 64, alignItems: "flex-start" }}>
+
+            {/* Text */}
+            <div style={{ flex: "1 1 380px" }}>
               <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>About Todd</span>
               <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 20 }}>{about.heading}</h2>
               <p style={{ fontSize: 17, color: "#475569", lineHeight: 1.75, marginBottom: 16 }}>{about.bio1}</p>
@@ -495,7 +486,29 @@ export default function MainSite({ content, onAdminClick, onNavigate }) {
                 ))}
               </div>
             </div>
-            <div style={{ flex: "0 1 360px", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+
+            {/* Photo — right side, matches text column height */}
+            {about.photoUrl && (
+              <div style={{ flex: "0 1 380px" }}>
+                <img
+                  src={about.photoUrl}
+                  alt="Todd Ponsky"
+                  style={{
+                    width: "100%", height: "100%",
+                    maxHeight: 480,
+                    objectFit: "cover", objectPosition: "top center",
+                    borderRadius: 20,
+                    boxShadow: "0 8px 32px rgba(0,0,0,0.14)",
+                    display: "block",
+                  }}
+                />
+              </div>
+            )}
+          </div>
+
+          {/* Role cards below */}
+          {about.roles?.length > 0 && (
+            <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr 1fr" : "repeat(4, 1fr)", gap: 16, marginTop: 56 }}>
               {about.roles.map((card) => (
                 <div key={card.title} style={{ background: "#fff", border: "1px solid #e2e8f0", borderRadius: 16, padding: 20, boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}>
                   <div style={{ fontSize: 32, marginBottom: 8 }}>{card.icon}</div>
@@ -504,7 +517,8 @@ export default function MainSite({ content, onAdminClick, onNavigate }) {
                 </div>
               ))}
             </div>
-          </div>
+          )}
+
         </div>
       </section>}
 
