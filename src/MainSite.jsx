@@ -472,6 +472,19 @@ export default function MainSite({ content, onAdminClick, onNavigate }) {
         <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           <div style={{ display: "flex", flexWrap: "wrap", gap: 64, alignItems: "center" }}>
             <div style={{ flex: "1 1 420px" }}>
+              {about.photoUrl && (
+                <img
+                  src={about.photoUrl}
+                  alt="Todd Ponsky"
+                  style={{
+                    width: 100, height: 100, borderRadius: "50%",
+                    objectFit: "cover", marginBottom: 24,
+                    border: "3px solid #fff",
+                    boxShadow: "0 4px 16px rgba(0,0,0,0.12)",
+                    display: "block",
+                  }}
+                />
+              )}
               <span style={{ color: "#2563eb", fontSize: 12, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase" }}>About Todd</span>
               <h2 style={{ fontSize: 38, fontWeight: 800, color: "#0f172a", marginTop: 8, marginBottom: 20 }}>{about.heading}</h2>
               <p style={{ fontSize: 17, color: "#475569", lineHeight: 1.75, marginBottom: 16 }}>{about.bio1}</p>

@@ -21,6 +21,7 @@ export const DEFAULT_CONTENT = {
   },
 
   about: {
+    photoUrl: "",
     heading: "Your Guide to the AI Landscape",
     bio1:
       "Todd Ponsky is a leading AI educator, consultant, and content creator helping individuals and organizations understand and harness artificial intelligence. With over 8 years of experience at the intersection of technology and business strategy, Todd translates complex AI concepts into practical, actionable frameworks.",
